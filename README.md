@@ -7,7 +7,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-v17-blue" alt="Version">
-  <img src="https://img.shields.io/badge/license-ISC-green" alt="License">
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
   <img src="https://img.shields.io/badge/Node.js-16%2B-brightgreen" alt="Node">
   <img src="https://img.shields.io/badge/Python-3.8%2B-blue" alt="Python">
   <img src="https://img.shields.io/badge/AI-DeepSeek-blueviolet" alt="DeepSeek">
