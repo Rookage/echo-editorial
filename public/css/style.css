@@ -1536,3 +1536,100 @@ header .subtitle {
     margin-left: 64px;
   }
 }
+
+/* ============ History Panel ============ */
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+.history-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  border: 3px solid var(--brick);
+  background: var(--card-bg);
+  cursor: pointer;
+  transition: border-color 0.1s steps(2);
+}
+
+.history-item:hover {
+  border-color: var(--gold);
+}
+
+.history-item-icon {
+  font-family: 'Press Start 2P', monospace;
+  font-size: var(--fs-heading);
+  flex-shrink: 0;
+  width: 36px;
+  text-align: center;
+}
+
+.history-item-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.history-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.history-item-template {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: var(--brick);
+}
+
+.history-item-date {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--brick);
+  opacity: 0.7;
+}
+
+.history-item-preview {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--text);
+  line-height: 1.5;
+  word-break: break-all;
+}
+
+.history-item-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.history-item-actions .btn {
+  font-size: 9px;
+  padding: 4px 8px;
+}
+
+.history-empty {
+  text-align: center;
+  padding: 20px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: var(--fs-small);
+  color: var(--brick);
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .history-item {
+    flex-direction: column;
+  }
+  .history-item-actions {
+    flex-direction: row;
+  }
+}

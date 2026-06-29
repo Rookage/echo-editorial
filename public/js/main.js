@@ -995,4 +995,142 @@
   toast.addEventListener('animationend', () => {
     setTimeout(hideToast, 5000);
   }, { once: true });
+
+  // ============ History Panel ============
+
+  var historyCard = document.getElementById('historyCard');
+  var historyList = document.getElementById('historyList');
+  var historyEmpty = document.getElementById('historyEmpty');
+  var refreshHistoryBtn = document.getElementById('refreshHistoryBtn');
+
+  async function loadHistory() {
+    try {
+      var res = await fetch('/api/history?limit=20');
+      var data = await res.json();
+      if (!data.success) return;
+
+      historyList.innerHTML = '';
+
+      if (data.records.length === 0) {
+        show(historyEmpty);
+        return;
+      }
+
+      hide(historyEmpty);
+      data.records.forEach(function (r) {
+        var item = document.createElement('div');
+        item.className = 'history-item';
+        item.innerHTML =
+          '<span class="history-item-icon">' + (r.templateIcon || '[◆]') + '</span>' +
+          '<div class="history-item-body">' +
+            '<div class="history-item-meta">' +
+              '<span class="history-item-template">' + (r.templateName || r.templateId) + '</span>' +
+              '<span class="history-item-date">' + formatDate(r.timestamp) + '</span>' +
+            '</div>' +
+            '<div class="history-item-preview">' + r.preview + '</div>' +
+          '</div>' +
+          '<div class="history-item-actions">' +
+            '<button class="btn btn-small history-load-btn" data-id="' + r.id + '">[▶] 查看</button>' +
+            '<button class="btn btn-small history-del-btn" data-id="' + r.id + '">[×] 删除</button>' +
+          '</div>';
+
+        // Click on item body to load
+        item.querySelector('.history-item-body').addEventListener('click', function () {
+          loadHistoryRecord(r.id);
+        });
+        item.querySelector('.history-load-btn').addEventListener('click', function (e) {
+          e.stopPropagation();
+          loadHistoryRecord(r.id);
+        });
+        item.querySelector('.history-del-btn').addEventListener('click', function (e) {
+          e.stopPropagation();
+          deleteHistoryRecord(r.id, item);
+        });
+
+        historyList.appendChild(item);
+      });
+
+      show(historyCard);
+    } catch (e) {
+      console.warn('Failed to load history:', e.message);
+    }
+  }
+
+  async function loadHistoryRecord(id) {
+    try {
+      var res = await fetch('/api/history/' + id);
+      var data = await res.json();
+      if (!data.success) return;
+
+      var r = data.record;
+      extractedText = r.originalText;
+      currentRewriteText = r.rewrittenText;
+      selectedTemplateId = r.templateId;
+
+      // Show text in text card
+      textSource.textContent = '历史记录 · ' + (r.templateName || r.templateId);
+      textDisplay.textContent = r.originalText;
+      show(textCard);
+
+      // Show result in result card
+      resultTitle.textContent = (r.templateIcon || '') + ' ' + (r.templateName || r.templateId);
+      resultContent.textContent = r.rewrittenText;
+      show(resultCard);
+      setPipeline('rewrite');
+
+      // Show template badge
+      if (r.templateIcon) {
+        resultTemplateIcon.textContent = r.templateIcon;
+        resultTemplateName.textContent = '由「' + r.templateName + '」模板生成 · ' + formatDate(r.timestamp);
+        show(resultTemplateBadge);
+      }
+
+      // Show score card if available
+      if (r.scoreCard) {
+        renderScoreCard(r.scoreCard);
+        show(scoreCard);
+      } else {
+        hide(scoreCard);
+      }
+
+      // Scroll to result
+      resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (e) {
+      showToast('加载记录失败', 'error');
+    }
+  }
+
+  async function deleteHistoryRecord(id, itemEl) {
+    try {
+      var res = await fetch('/api/history/' + id, { method: 'DELETE' });
+      var data = await res.json();
+      if (!data.success) throw new Error('Delete failed');
+
+      itemEl.style.transition = 'opacity 0.2s';
+      itemEl.style.opacity = '0';
+      setTimeout(function () {
+        itemEl.remove();
+        if (historyList.children.length === 0) {
+          show(historyEmpty);
+        }
+      }, 200);
+    } catch (e) {
+      showToast('删除失败', 'error');
+    }
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '';
+    var d = new Date(iso);
+    var mm = String(d.getMonth() + 1).padStart(2, '0');
+    var dd = String(d.getDate()).padStart(2, '0');
+    var hh = String(d.getHours()).padStart(2, '0');
+    var mi = String(d.getMinutes()).padStart(2, '0');
+    return mm + '/' + dd + ' ' + hh + ':' + mi;
+  }
+
+  refreshHistoryBtn.addEventListener('click', loadHistory);
+
+  // Load history on page init and after each rewrite
+  loadHistory();
 })();

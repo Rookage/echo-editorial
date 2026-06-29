@@ -373,6 +373,21 @@
       </div>
     </div>
 
+    <!-- History Panel -->
+    <div class="card hidden" id="historyCard">
+      <div class="card-header-row">
+        <div>
+          <div class="card-title">[◈] 稿件历史</div>
+          <div class="char-speech">所有改写记录都在这里</div>
+        </div>
+        <button class="btn btn-small" id="refreshHistoryBtn">[↻] 刷新</button>
+      </div>
+      <div class="history-list" id="historyList">
+        <!-- Populated dynamically by JS -->
+      </div>
+      <div class="history-empty hidden" id="historyEmpty">暂无记录，快去改写一篇文章吧！</div>
+    </div>
+
     <!-- Error Toast -->
     <div class="toast hidden" id="toast">
       <span class="toast-msg" id="toastMsg"></span>
