@@ -3,54 +3,392 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WHALE - 抖音文案智能改写工具</title>
+  <title>回声编辑部 Echo Editorial</title>
+  <meta name="description" content="回声编辑部：把短视频的回声，整理成新的稿、新的声音、新的视频。">
   <style>
-    :root { --bg: #fafafa; --surface: #fff; --text: #1e293b; --text2: #64748b; --primary: #2563eb; }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
-    .hero { background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 80px 24px; text-align: center; }
-    .hero h1 { font-size: 42px; margin-bottom: 12px; }
-    .hero p { color: #94a3b8; font-size: 18px; max-width: 600px; margin: 0 auto 24px; }
-    .hero .badge { display: inline-block; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 4px 14px; border-radius: 20px; font-size: 13px; margin: 4px; }
-    .container { max-width: 1000px; margin: 0 auto; padding: 48px 24px; }
-    .pipeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 48px; }
-    @media (max-width: 768px) { .pipeline { grid-template-columns: repeat(2, 1fr); } }
-    .stage { background: var(--surface); border: 1px solid #e5e5e5; border-radius: 10px; padding: 20px; text-align: center; }
-    .stage .num { width: 32px; height: 32px; background: var(--primary); color: #fff; border-radius: 50%; margin: 0 auto 8px; line-height: 32px; font-weight: 700; font-size: 14px; }
-    .stage h3 { font-size: 14px; margin-bottom: 4px; }
-    .stage p { font-size: 12px; color: var(--text2); }
-    .cta { text-align: center; padding: 32px; }
-    .btn { display: inline-block; background: var(--primary); color: #fff; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; }
-    footer { text-align: center; padding: 32px; color: var(--text2); font-size: 13px; border-top: 1px solid #e5e5e5; }
+    :root {
+      --ink: #161616;
+      --paper: #f4efe4;
+      --paper-soft: #fffaf0;
+      --muted: #6f675c;
+      --line: #d7c7ad;
+      --accent: #b45f3a;
+      --accent-deep: #783b2a;
+      --blue: #335c67;
+      --green: #506d5a;
+      --shadow: rgba(22, 22, 22, 0.18);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(22,22,22,0.035) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(22,22,22,0.035) 1px, transparent 1px),
+        var(--paper);
+      background-size: 28px 28px;
+      line-height: 1.65;
+    }
+
+    a { color: inherit; }
+
+    .hero {
+      min-height: 92vh;
+      display: grid;
+      align-items: center;
+      padding: 48px 24px 36px;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 18% 24%, rgba(180, 95, 58, 0.16), transparent 30%),
+        radial-gradient(circle at 84% 12%, rgba(51, 92, 103, 0.18), transparent 28%),
+        linear-gradient(145deg, #2b241f 0%, #181716 52%, #33251f 100%);
+      color: var(--paper-soft);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 24vh;
+      background:
+        linear-gradient(transparent, rgba(0,0,0,0.35)),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.08) 0 2px, transparent 2px 56px);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.04fr) minmax(320px, 0.96fr);
+      gap: 42px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      margin: 0 0 18px;
+      color: #d9c1a5;
+      letter-spacing: 0.18em;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(44px, 8vw, 86px);
+      line-height: 1.02;
+      font-weight: 760;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 640px;
+      margin: 24px 0 0;
+      color: #eadccb;
+      font-size: clamp(18px, 2.2vw, 24px);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      min-height: 46px;
+      padding: 11px 18px;
+      border: 1px solid rgba(244,239,228,0.55);
+      color: var(--paper-soft);
+      text-decoration: none;
+      font-weight: 700;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .desk {
+      position: relative;
+      min-height: 430px;
+      padding: 26px;
+      border: 1px solid rgba(244,239,228,0.24);
+      background:
+        linear-gradient(160deg, rgba(255,255,255,0.1), rgba(255,255,255,0.025)),
+        rgba(20, 18, 16, 0.45);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.32);
+    }
+
+    .paper {
+      position: absolute;
+      inset: 34px 32px auto;
+      min-height: 260px;
+      padding: 24px 24px 26px;
+      background: var(--paper-soft);
+      color: var(--ink);
+      box-shadow: 0 18px 42px rgba(0,0,0,0.28);
+      transform: rotate(-2deg);
+    }
+
+    .paper h2 {
+      margin: 0 0 12px;
+      font-size: 22px;
+    }
+
+    .paper p {
+      margin: 9px 0;
+      color: #4e463d;
+    }
+
+    .mark {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 6px 10px;
+      border: 1px solid var(--accent);
+      color: var(--accent-deep);
+      font-weight: 700;
+      transform: rotate(2deg);
+    }
+
+    .wave {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 34px;
+      display: grid;
+      grid-template-columns: repeat(32, 1fr);
+      gap: 5px;
+      align-items: end;
+      height: 88px;
+    }
+
+    .wave span {
+      display: block;
+      min-height: 10px;
+      background: #d8a36e;
+      opacity: 0.92;
+    }
+
+    .wave span:nth-child(3n) { height: 72px; background: #83a598; }
+    .wave span:nth-child(4n) { height: 34px; background: #c46f4a; }
+    .wave span:nth-child(5n) { height: 58px; }
+
+    main {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: 70px 24px;
+    }
+
+    .section-title {
+      margin: 0 0 20px;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.16;
+    }
+
+    .section-copy {
+      max-width: 780px;
+      margin: 0 0 34px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin: 32px 0 72px;
+    }
+
+    .step {
+      min-height: 190px;
+      padding: 20px;
+      background: var(--paper-soft);
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 28px var(--shadow);
+    }
+
+    .step-num {
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+    }
+
+    .step h3 {
+      margin: 22px 0 8px;
+      font-size: 21px;
+    }
+
+    .step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 42px;
+      align-items: start;
+      margin-top: 24px;
+    }
+
+    .note {
+      padding: 26px;
+      background: #263238;
+      color: var(--paper-soft);
+      box-shadow: 0 18px 44px var(--shadow);
+    }
+
+    .note h3 { margin: 0 0 12px; font-size: 22px; }
+    .note p { margin: 0; color: #d7dedb; }
+
+    .terms {
+      display: grid;
+      gap: 12px;
+    }
+
+    .term {
+      padding: 18px 20px;
+      border-left: 4px solid var(--accent);
+      background: rgba(255,250,240,0.8);
+    }
+
+    .term strong { display: block; margin-bottom: 4px; }
+    .term span { color: var(--muted); }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 28px 24px 42px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .hero-inner, .split { grid-template-columns: 1fr; }
+      .hero { min-height: auto; }
+      .flow { grid-template-columns: repeat(2, 1fr); }
+      .desk { min-height: 380px; }
+    }
+
+    @media (max-width: 560px) {
+      .hero { padding: 36px 16px 26px; }
+      main { padding: 52px 16px; }
+      .flow { grid-template-columns: 1fr; }
+      .paper { inset: 24px 20px auto; }
+      .desk { padding: 18px; }
+      .button { width: 100%; justify-content: center; }
+    }
   </style>
 </head>
 <body>
-<div class="hero">
-  <h1>🐳 WHALE</h1>
-  <p>抖音链接 → 视频描述提取 → 逐字稿 → AI改写 → TTS语音 → 视频合成</p>
-  <div>
-    <span class="badge">Puppeteer</span>
-    <span class="badge">faster-whisper</span>
-    <span class="badge">DeepSeek AI</span>
-    <span class="badge">edge-tts</span>
-    <span class="badge">ffmpeg</span>
-  </div>
-</div>
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <p class="eyebrow">Echo Editorial · Creator Tool</p>
+        <h1>回声编辑部</h1>
+        <p class="lead">把短视频的回声，整理成新的稿、新的声音、新的视频。</p>
+        <div class="hero-actions">
+          <a class="button primary" href="https://github.com/Rookage/whale">查看 GitHub 仓库</a>
+          <a class="button" href="https://github.com/Rookage/whale#快速开始">快速开始</a>
+        </div>
+      </div>
 
-<div class="container">
-  <div class="pipeline">
-    <div class="stage"><div class="num">1</div><h3>提取描述</h3><p>Puppeteer 自动爬取</p></div>
-    <div class="stage"><div class="num">2</div><h3>语音转文字</h3><p>Whisper 逐字稿</p></div>
-    <div class="stage"><div class="num">3</div><h3>AI 改写</h3><p>小红书 / 抖音风格</p></div>
-    <div class="stage"><div class="num">4</div><h3>TTS 语音</h3><p>6 种中文语音</p></div>
-    <div class="stage"><div class="num">5</div><h3>视频合成</h3><p>Pexels + ffmpeg</p></div>
-  </div>
-</div>
+      <div class="desk" aria-label="编辑室里的稿纸和声波">
+        <div class="paper">
+          <h2>今日编辑台</h2>
+          <p>原视频：一段被反复播放的短视频。</p>
+          <p>整理：逐字稿、观点、结构、标题。</p>
+          <p>输出：小红书稿、口播稿、配音、竖屏视频。</p>
+          <span class="mark">已整理成稿</span>
+        </div>
+        <div class="wave" aria-hidden="true">
+          <span style="height:24px"></span><span style="height:48px"></span><span></span><span></span>
+          <span></span><span style="height:30px"></span><span style="height:64px"></span><span></span>
+          <span style="height:20px"></span><span></span><span style="height:76px"></span><span></span>
+          <span style="height:40px"></span><span style="height:22px"></span><span></span><span style="height:66px"></span>
+          <span></span><span style="height:28px"></span><span style="height:54px"></span><span></span>
+          <span style="height:18px"></span><span></span><span style="height:74px"></span><span></span>
+          <span style="height:36px"></span><span style="height:58px"></span><span></span><span></span>
+          <span style="height:24px"></span><span style="height:50px"></span><span></span><span style="height:32px"></span>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<div class="cta">
-  <a href="https://github.com/Rookage/whale" class="btn">GitHub 仓库</a>
-</div>
+  <main>
+    <section>
+      <h2 class="section-title">不是搬运，是把素材重新编辑成你的表达。</h2>
+      <p class="section-copy">
+        回声编辑部面向内容创作者，把短视频链接、本地 MP4 或手动文案接进同一条工作流：提取、转写、改写、配音、成片。
+      </p>
 
-<footer>MIT License · Built by <a href="https://github.com/Rookage">Rookage</a></footer>
+      <div class="flow">
+        <div class="step">
+          <div class="step-num">01 INPUT</div>
+          <h3>输入</h3>
+          <p>粘贴抖音链接，上传 MP4，或者直接粘贴原始文案。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">02 TRANSCRIBE</div>
+          <h3>转写</h3>
+          <p>ASR（语音识别）把视频里的声音整理成逐字稿。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">03 REWRITE</div>
+          <h3>改写</h3>
+          <p>AI 根据平台语气生成小红书或抖音精选文案。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">04 VOICE</div>
+          <h3>配音</h3>
+          <p>TTS（文字转语音）把稿件变成中文旁白。</p>
+        </div>
+        <div class="step">
+          <div class="step-num">05 VIDEO</div>
+          <h3>成片</h3>
+          <p>ffmpeg 合成配图、音频和竖屏 MP4。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="split">
+      <div class="note">
+        <h3>一个本地优先的内容工作间</h3>
+        <p>
+          回声编辑部默认在你的电脑上运行。它会调用 DeepSeek、Pexels、edge-tts 等外部服务，但生成的音频、视频和本地配置都留在你的机器上。
+        </p>
+      </div>
+
+      <div class="terms">
+        <div class="term">
+          <strong>ASR</strong>
+          <span>Automatic Speech Recognition，语音识别：把视频声音转成文字。</span>
+        </div>
+        <div class="term">
+          <strong>TTS</strong>
+          <span>Text-to-Speech，文字转语音：把改写好的稿子生成配音。</span>
+        </div>
+        <div class="term">
+          <strong>CI</strong>
+          <span>Continuous Integration，持续集成：每次提交后自动检查代码有没有明显问题。</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    回声编辑部 Echo Editorial · MIT License · Built by Rookage
+  </footer>
 </body>
 </html>
