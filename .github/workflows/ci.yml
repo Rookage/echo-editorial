@@ -21,10 +21,19 @@ jobs:
         with:
           python-version: "3.12"
       - run: npm ci
-      - name: Check JavaScript syntax
+      - run: npm run check
+      - name: Install FFmpeg (smoke test)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Smoke test — server starts and /api/config returns valid JSON
         run: |
-          node --check server.js
-          node --check public/js/main.js
-          find services -name '*.js' -print0 | xargs -0 -n1 node --check
-      - name: Check Python syntax
-        run: python -m py_compile tts.py transcribe.py
+          node server.js &
+          SERVER_PID=$!
+          # Wait for server to be ready (up to 15s)
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3000/api/config > /dev/null 2>&1; then break; fi
+            sleep 0.5
+          done
+          RESP=$(curl -sf http://localhost:3000/api/config)
+          echo "Response: $RESP"
+          echo "$RESP" | python3 -c "import sys,json; d=json.load(sys.stdin); assert d.get('success')==True, 'success field missing'; print('Smoke test passed')"
+          kill $SERVER_PID 2>/dev/null || true

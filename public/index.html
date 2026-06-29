@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>回声编辑部 · Echo Editorial</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/style.css?v=19">
+  <link rel="stylesheet" href="css/style.css?v=20">
 </head>
 <body>
   <div class="shell">
@@ -32,7 +32,7 @@
       <div class="board-item">
         <span class="board-role">审稿编辑</span>
         <strong>风格改写</strong>
-        <p>生成小红书或抖音精选风格文案。</p>
+        <p>模板、评分、多版本，让稿件进入真正编辑流程。</p>
       </div>
       <div class="board-item">
         <span class="board-role">包装编辑</span>
@@ -152,9 +152,15 @@
           <button class="btn btn-small" id="copyTextBtn">复制全文</button>
           <span class="copy-toast hidden" id="textCopyToast">已复制</span>
         </div>
+
+        <div class="template-section" id="templateSection">
+          <div class="template-label">选择改写风格</div>
+          <div class="template-grid" id="templateGrid"></div>
+        </div>
+
         <div class="rewrite-buttons">
-          <button class="btn btn-accent" id="rewriteXhsBtn">改写小红书</button>
-          <button class="btn btn-accent btn-douyin" id="rewriteDouyinBtn">改写抖音精选</button>
+          <button class="btn btn-accent" id="rewriteBtn">开始改写</button>
+          <button class="btn btn-accent btn-douyin" id="rewriteMultiBtn">生成 3 个版本</button>
         </div>
         <div class="field-error hidden" id="textError"></div>
       </section>
@@ -169,7 +175,24 @@
         </div>
         <div class="char-speech review-note" id="rewriteSpeech">我会先保留信息密度，再把语气改到适合发布。</div>
         <div class="result-content" id="resultContent"></div>
+        <div class="result-template-badge hidden" id="resultTemplateBadge">
+          <span id="resultTemplateIcon"></span>
+          <span id="resultTemplateName"></span>
+        </div>
         <div class="copy-toast hidden" id="copyToast">已复制到剪贴板</div>
+
+        <div class="score-card hidden" id="scoreCard">
+          <div class="score-card-header">
+            <span class="score-card-title">稿件评分</span>
+            <span class="score-overall" id="scoreOverall">7.5</span>
+            <span class="score-overall-comment" id="scoreOverallComment"></span>
+          </div>
+          <div class="score-dimensions" id="scoreDimensions"></div>
+          <div class="score-actions">
+            <button class="btn btn-accent" id="reoptimizeBtn">基于建议重新优化</button>
+            <span class="copy-toast hidden" id="reoptToast">优化完成</span>
+          </div>
+        </div>
 
         <div class="audio-section">
           <div class="section-heading">
@@ -225,6 +248,18 @@
           <div class="field-error hidden" id="videoError"></div>
         </div>
       </section>
+
+      <section class="card hidden" id="historyCard">
+        <div class="card-header-row">
+          <div>
+            <p class="role-label">复盘编辑</p>
+            <h2 class="card-title">稿件历史</h2>
+          </div>
+          <button class="btn btn-small" id="refreshHistoryBtn">刷新</button>
+        </div>
+        <div class="history-list" id="historyList"></div>
+        <div class="history-empty hidden" id="historyEmpty">暂无记录，先改写一篇稿件。</div>
+      </section>
     </main>
 
     <div class="toast hidden" id="toast">
@@ -233,6 +268,6 @@
     </div>
   </div>
 
-  <script src="js/main.js?v=19"></script>
+  <script src="js/main.js?v=20"></script>
 </body>
 </html>

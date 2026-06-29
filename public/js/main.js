@@ -85,8 +85,18 @@
   const textCard = document.getElementById('textCard');
   const textSource = document.getElementById('textSource');
   const textDisplay = document.getElementById('textDisplay');
-  const rewriteXhsBtn = document.getElementById('rewriteXhsBtn');
-  const rewriteDouyinBtn = document.getElementById('rewriteDouyinBtn');
+  const rewriteXhsBtn = document.getElementById('rewriteBtn');
+  const rewriteDouyinBtn = document.getElementById('rewriteMultiBtn');
+  const templateGrid = document.getElementById('templateGrid');
+  const resultTemplateBadge = document.getElementById('resultTemplateBadge');
+  const resultTemplateIcon = document.getElementById('resultTemplateIcon');
+  const resultTemplateName = document.getElementById('resultTemplateName');
+  const scoreCard = document.getElementById('scoreCard');
+  const scoreOverall = document.getElementById('scoreOverall');
+  const scoreOverallComment = document.getElementById('scoreOverallComment');
+  const scoreDimensions = document.getElementById('scoreDimensions');
+  const reoptimizeBtn = document.getElementById('reoptimizeBtn');
+  const reoptToast = document.getElementById('reoptToast');
   const textError = document.getElementById('textError');
 
   const resultCard = document.getElementById('resultCard');
@@ -139,7 +149,59 @@
   // State
   let extractedText = '';
 
-  // ============ API Key Config ============
+  // ============ Template System ============
+
+  let templates = [];
+  let selectedTemplateId = 'xhs';
+
+  async function loadTemplates() {
+    try {
+      const res = await fetch('/api/templates');
+      const data = await res.json();
+      if (data.success && data.templates.length > 0) {
+        templates = data.templates;
+        renderTemplateGrid();
+        selectTemplate('xhs'); // Default to first template
+      }
+    } catch (e) {
+      // Templates not available, use fallback
+      console.warn('Failed to load templates, using defaults');
+    }
+  }
+
+  function renderTemplateGrid() {
+    templateGrid.innerHTML = '';
+    templates.forEach(function (t) {
+      var card = document.createElement('div');
+      card.className = 'template-card';
+      card.dataset.templateId = t.id;
+      card.innerHTML =
+        '<span class="template-card-icon">' + t.icon + '</span>' +
+        '<span class="template-card-name">' + t.name + '</span>';
+      card.addEventListener('click', function () { selectTemplate(t.id); });
+      templateGrid.appendChild(card);
+    });
+  }
+
+  function selectTemplate(id) {
+    selectedTemplateId = id;
+    // Update card styles
+    templateGrid.querySelectorAll('.template-card').forEach(function (c) {
+      c.classList.toggle('selected', c.dataset.templateId === id);
+    });
+    // Update recommended voice
+    var t = templates.find(function (tmpl) { return tmpl.id === id; });
+    if (t && t.voice) {
+      voiceSelect.value = t.voice;
+    }
+    // Update rewrite button text
+    if (t) {
+      rewriteXhsBtn.textContent = t.icon + ' 改写' + t.name;
+    }
+  }
+
+  // Load templates on page init
+  loadTemplates();
 
   const configCard = document.getElementById('configCard');
   const configToggle = document.getElementById('configToggle');
@@ -570,11 +632,11 @@
   });
 
   // Rewrite — shared handler
-  const STYLE_LABELS = { xhs: '[♛] 小红书风格文案', douyin: '[★] 抖音精选文案' };
-  const STYLE_VOICES = { xhs: 'zh-CN-XiaoxiaoNeural', douyin: 'zh-CN-YunxiNeural' };
+  var STYLE_LABELS = { xhs: '[♛] 小红书风格文案', douyin: '[★] 抖音精选文案' };
+  var STYLE_VOICES = { xhs: 'zh-CN-XiaoxiaoNeural', douyin: 'zh-CN-YunxiNeural' };
 
-  async function handleRewrite(style, btn, label) {
-    const text = extractedText || manualInput.value.trim();
+  async function handleRewrite(style, btn, label, isMulti) {
+    var text = extractedText || manualInput.value.trim();
 
     if (!text) {
       showError(textError, '请先输入或提取文字内容');
@@ -583,21 +645,64 @@
 
     hideError(textError);
     hide(resultCard);
-    setLoading(true, `AI 正在改写为${label}风格...`);
+    var loadingMsg = isMulti ? 'AI 正在生成3个版本...' : ('AI 正在改写为' + label + '风格...');
+    setLoading(true, loadingMsg);
     setBtnLoading(btn, true);
 
     try {
-      const data = await rewrite(text, style);
-      resultTitle.textContent = STYLE_LABELS[style] || STYLE_LABELS.xhs;
-      resultContent.textContent = data.rewritten;
+      var endpoint = isMulti ? '/api/rewrite/multi' : '/api/rewrite';
+      var body = { text: text, style: style };
+      if (isMulti) body.count = 3;
+
+      var res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
+        body: JSON.stringify(body),
+      });
+      var data = await res.json();
+      if (!data.success) throw data.error;
+
+      if (isMulti && data.versions) {
+        // Multi-version: show first version in main view, list others below
+        resultTitle.textContent = data.template ? (data.template.icon + ' ' + data.template.name + ' · 3个版本') : ('多版本改写');
+        resultContent.textContent = data.versions[0].text;
+        // Add version switcher
+        renderVersionSwitcher(data.versions);
+      } else {
+        var templateName = data.template ? data.template.name : label;
+        resultTitle.textContent = data.template ? (data.template.icon + ' ' + data.template.name) : (label + '风格文案');
+        resultContent.textContent = data.rewritten;
+        // Show template badge
+        if (data.template) {
+          resultTemplateIcon.textContent = data.template.icon;
+          resultTemplateName.textContent = '由「' + data.template.name + '」模板生成';
+          show(resultTemplateBadge);
+        } else {
+          hide(resultTemplateBadge);
+        }
+        // Hide version switcher if showing single result
+        var vsEl = document.getElementById('versionSwitcher');
+        if (vsEl) hide(vsEl);
+      }
+
       // Reset audio state
       hide(audioPlayer);
       hide(ttsError);
       hideError(ttsError);
       // Set recommended voice
-      voiceSelect.value = STYLE_VOICES[style] || 'zh-CN-XiaoxiaoNeural';
+      voiceSelect.value = data.template && data.template.voice ? findVoiceForTemplate(data.template.id) : 'zh-CN-XiaoxiaoNeural';
       currentStyle = style;
       hide(videoPlayer);
+      // Store rewritten text for scoring
+      if (!isMulti) {
+        currentRewriteText = data.rewritten;
+      } else {
+        currentRewriteText = data.versions[0].text;
+      }
+      // Trigger scoring after rewrite
+      currentScoreCard = null;
+      hide(scoreCard);
+      scoreCurrentManuscript();
       show(resultCard);
       setPipeline('rewrite');
       if (rewriteSpeech) rewriteSpeech.textContent = '让我把它变成超好看的风格！';
@@ -610,12 +715,145 @@
     }
   }
 
-  rewriteXhsBtn.addEventListener('click', () => handleRewrite('xhs', rewriteXhsBtn, '小红书'));
-  rewriteDouyinBtn.addEventListener('click', () => handleRewrite('douyin', rewriteDouyinBtn, '抖音精选'));
+  function findVoiceForTemplate(templateId) {
+    var t = templates.find(function (tmpl) { return tmpl.id === templateId; });
+    return t ? t.voice : 'zh-CN-XiaoxiaoNeural';
+  }
+
+  function renderVersionSwitcher(versions) {
+    var existing = document.getElementById('versionSwitcher');
+    if (existing) existing.remove();
+    var div = document.createElement('div');
+    div.id = 'versionSwitcher';
+    div.className = 'version-switcher';
+    div.innerHTML = '<div class="version-label">[✦] 版本</div><div class="version-tabs"></div>';
+    var tabs = div.querySelector('.version-tabs');
+    versions.forEach(function (v, i) {
+      var btn = document.createElement('button');
+      btn.className = 'btn btn-small version-tab' + (i === 0 ? ' active' : '');
+      btn.textContent = 'v' + (i + 1);
+      btn.addEventListener('click', function () {
+        resultContent.textContent = v.text;
+        tabs.querySelectorAll('.version-tab').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+      });
+      tabs.appendChild(btn);
+    });
+    resultCard.insertBefore(div, resultCard.querySelector('.audio-section'));
+  }
+
+  rewriteXhsBtn.addEventListener('click', () => handleRewrite(selectedTemplateId, rewriteXhsBtn, findTemplateName(selectedTemplateId), false));
+  rewriteDouyinBtn.addEventListener('click', () => handleRewrite(selectedTemplateId, rewriteDouyinBtn, findTemplateName(selectedTemplateId), true));
+
+  function findTemplateName(id) {
+    var t = templates.find(function (tmpl) { return tmpl.id === id; });
+    return t ? t.name : id;
+  }
+
+  // ============ Scoring ============
+
+  let currentRewriteText = '';
+  let currentScoreCard = null;
+
+  async function scoreCurrentManuscript() {
+    var originalText = extractedText || manualInput.value.trim();
+    hide(scoreCard);
+    setBtnLoading(reoptimizeBtn, true);
+
+    try {
+      var res = await fetch('/api/scorer/score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          originalText: originalText,
+          rewrittenText: currentRewriteText,
+          templateId: selectedTemplateId,
+        }),
+      });
+      var data = await res.json();
+      if (!data.success) throw data.error;
+
+      currentScoreCard = data.scoreCard;
+      renderScoreCard(currentScoreCard);
+      show(scoreCard);
+    } catch (err) {
+      showToast('评分失败: ' + (err.message || '请重试'), 'error');
+    } finally {
+      setBtnLoading(reoptimizeBtn, false);
+    }
+  }
+
+  function renderScoreCard(sc) {
+    scoreOverall.textContent = sc.overallScore.toFixed(1);
+    scoreOverallComment.textContent = sc.overallComment || '';
+
+    scoreDimensions.innerHTML = '';
+    (sc.dimensions || []).forEach(function (d) {
+      var barClass = d.score >= 8 ? 'high' : (d.score >= 5 ? 'mid' : 'low');
+
+      var row = document.createElement('div');
+      row.className = 'score-dim-row';
+      row.innerHTML =
+        '<span class="score-dim-name">' + d.name + '</span>' +
+        '<div class="score-dim-bar"><div class="score-dim-fill ' + barClass + '" style="width:' + (d.score * 10) + '%"></div></div>' +
+        '<span class="score-dim-value">' + d.score + '</span>';
+      scoreDimensions.appendChild(row);
+
+      if (d.suggestion) {
+        var sug = document.createElement('div');
+        sug.className = 'score-dim-suggestion';
+        sug.textContent = '↳ ' + d.suggestion;
+        scoreDimensions.appendChild(sug);
+      }
+    });
+  }
+
+  reoptimizeBtn.addEventListener('click', async function () {
+    if (!currentScoreCard) return;
+    setBtnLoading(reoptimizeBtn, true);
+    hide(reoptToast);
+
+    try {
+      var originalText = extractedText || manualInput.value.trim();
+      var res = await fetch('/api/scorer/reoptimize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          originalText: originalText,
+          rewrittenText: currentRewriteText,
+          scoreCard: currentScoreCard,
+          templateId: selectedTemplateId,
+        }),
+      });
+      var data = await res.json();
+      if (!data.success) throw data.error;
+
+      currentRewriteText = data.rewritten;
+      resultContent.textContent = data.rewritten;
+      if (data.template) {
+        resultTemplateIcon.textContent = data.template.icon;
+        resultTemplateName.textContent = '由「' + data.template.name + '」模板生成（已优化）';
+        show(resultTemplateBadge);
+      }
+
+      // Re-score the optimized version
+      currentScoreCard = null;
+      hide(scoreCard);
+      await scoreCurrentManuscript();
+
+      show(reoptToast);
+      setTimeout(function () { hide(reoptToast); }, 2000);
+      resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (err) {
+      showToast('优化失败: ' + (err.message || '请重试'), 'error');
+    } finally {
+      setBtnLoading(reoptimizeBtn, false);
+    }
+  });
 
   // TTS — Generate audio
   generateAudioBtn.addEventListener('click', async () => {
-    const text = resultContent.textContent;
+    var text = resultContent.textContent;
     if (!text) return;
     hide(ttsError);
     hide(audioPlayer);
@@ -758,4 +996,142 @@
   toast.addEventListener('animationend', () => {
     setTimeout(hideToast, 5000);
   }, { once: true });
+
+  // ============ History Panel ============
+
+  var historyCard = document.getElementById('historyCard');
+  var historyList = document.getElementById('historyList');
+  var historyEmpty = document.getElementById('historyEmpty');
+  var refreshHistoryBtn = document.getElementById('refreshHistoryBtn');
+
+  async function loadHistory() {
+    try {
+      var res = await fetch('/api/history?limit=20');
+      var data = await res.json();
+      if (!data.success) return;
+
+      historyList.innerHTML = '';
+
+      if (data.records.length === 0) {
+        show(historyEmpty);
+        return;
+      }
+
+      hide(historyEmpty);
+      data.records.forEach(function (r) {
+        var item = document.createElement('div');
+        item.className = 'history-item';
+        item.innerHTML =
+          '<span class="history-item-icon">' + (r.templateIcon || '[◆]') + '</span>' +
+          '<div class="history-item-body">' +
+            '<div class="history-item-meta">' +
+              '<span class="history-item-template">' + (r.templateName || r.templateId) + '</span>' +
+              '<span class="history-item-date">' + formatDate(r.timestamp) + '</span>' +
+            '</div>' +
+            '<div class="history-item-preview">' + r.preview + '</div>' +
+          '</div>' +
+          '<div class="history-item-actions">' +
+            '<button class="btn btn-small history-load-btn" data-id="' + r.id + '">[▶] 查看</button>' +
+            '<button class="btn btn-small history-del-btn" data-id="' + r.id + '">[×] 删除</button>' +
+          '</div>';
+
+        // Click on item body to load
+        item.querySelector('.history-item-body').addEventListener('click', function () {
+          loadHistoryRecord(r.id);
+        });
+        item.querySelector('.history-load-btn').addEventListener('click', function (e) {
+          e.stopPropagation();
+          loadHistoryRecord(r.id);
+        });
+        item.querySelector('.history-del-btn').addEventListener('click', function (e) {
+          e.stopPropagation();
+          deleteHistoryRecord(r.id, item);
+        });
+
+        historyList.appendChild(item);
+      });
+
+      show(historyCard);
+    } catch (e) {
+      console.warn('Failed to load history:', e.message);
+    }
+  }
+
+  async function loadHistoryRecord(id) {
+    try {
+      var res = await fetch('/api/history/' + id);
+      var data = await res.json();
+      if (!data.success) return;
+
+      var r = data.record;
+      extractedText = r.originalText;
+      currentRewriteText = r.rewrittenText;
+      selectedTemplateId = r.templateId;
+
+      // Show text in text card
+      textSource.textContent = '历史记录 · ' + (r.templateName || r.templateId);
+      textDisplay.textContent = r.originalText;
+      show(textCard);
+
+      // Show result in result card
+      resultTitle.textContent = (r.templateIcon || '') + ' ' + (r.templateName || r.templateId);
+      resultContent.textContent = r.rewrittenText;
+      show(resultCard);
+      setPipeline('rewrite');
+
+      // Show template badge
+      if (r.templateIcon) {
+        resultTemplateIcon.textContent = r.templateIcon;
+        resultTemplateName.textContent = '由「' + r.templateName + '」模板生成 · ' + formatDate(r.timestamp);
+        show(resultTemplateBadge);
+      }
+
+      // Show score card if available
+      if (r.scoreCard) {
+        renderScoreCard(r.scoreCard);
+        show(scoreCard);
+      } else {
+        hide(scoreCard);
+      }
+
+      // Scroll to result
+      resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (e) {
+      showToast('加载记录失败', 'error');
+    }
+  }
+
+  async function deleteHistoryRecord(id, itemEl) {
+    try {
+      var res = await fetch('/api/history/' + id, { method: 'DELETE' });
+      var data = await res.json();
+      if (!data.success) throw new Error('Delete failed');
+
+      itemEl.style.transition = 'opacity 0.2s';
+      itemEl.style.opacity = '0';
+      setTimeout(function () {
+        itemEl.remove();
+        if (historyList.children.length === 0) {
+          show(historyEmpty);
+        }
+      }, 200);
+    } catch (e) {
+      showToast('删除失败', 'error');
+    }
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '';
+    var d = new Date(iso);
+    var mm = String(d.getMonth() + 1).padStart(2, '0');
+    var dd = String(d.getDate()).padStart(2, '0');
+    var hh = String(d.getHours()).padStart(2, '0');
+    var mi = String(d.getMinutes()).padStart(2, '0');
+    return mm + '/' + dd + ' ' + hh + ':' + mi;
+  }
+
+  refreshHistoryBtn.addEventListener('click', loadHistory);
+
+  // Load history on page init and after each rewrite
+  loadHistory();
 })();
