@@ -32,6 +32,7 @@ app.use('/api/rewrite', require('./routes/rewrite'));
 app.use('/api/tts', require('./routes/tts'));
 app.use('/api/video', require('./routes/video'));
 app.use('/api/templates', require('./routes/templates'));
+app.use('/api/scorer', require('./routes/scorer'));
 app.use('/api/config', require('./routes/config'));
 app.use('/api', require('./routes/cache'));
 

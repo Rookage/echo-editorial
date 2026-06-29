@@ -1421,3 +1421,118 @@ header .subtitle {
   border-color: var(--gold) !important;
   box-shadow: 0 0 0 2px var(--gold) !important;
 }
+
+/* ============ Score Card ============ */
+
+.score-card {
+  margin-top: 16px;
+  padding: 12px;
+  border: 3px solid var(--brick);
+  background: var(--card-bg);
+}
+
+.score-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.score-card-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: var(--fs-small);
+  color: var(--brick);
+}
+
+.score-overall {
+  font-family: 'Press Start 2P', monospace;
+  font-size: var(--fs-heading);
+  color: var(--gold);
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.score-overall-comment {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--text);
+  flex: 1;
+  min-width: 120px;
+  line-height: 1.4;
+}
+
+.score-dimensions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.score-dim-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.score-dim-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--text);
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.score-dim-bar {
+  flex: 1;
+  height: 14px;
+  border: 2px solid var(--brick);
+  background: var(--card-bg);
+  position: relative;
+  image-rendering: pixelated;
+}
+
+.score-dim-fill {
+  height: 100%;
+  transition: width 0.3s steps(10);
+}
+
+.score-dim-fill.low { background: var(--red); }
+.score-dim-fill.mid { background: var(--gold); }
+.score-dim-fill.high { background: var(--green); }
+
+.score-dim-value {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: var(--text);
+  width: 24px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.score-dim-suggestion {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: var(--brick);
+  margin-top: 2px;
+  margin-left: 88px;
+  line-height: 1.4;
+}
+
+.score-actions {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 2px dashed var(--brick);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Responsive: narrow score dim name */
+@media (max-width: 600px) {
+  .score-dim-name {
+    width: 56px;
+    font-size: 7px;
+  }
+  .score-dim-suggestion {
+    margin-left: 64px;
+  }
+}

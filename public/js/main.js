@@ -91,6 +91,12 @@
   const resultTemplateBadge = document.getElementById('resultTemplateBadge');
   const resultTemplateIcon = document.getElementById('resultTemplateIcon');
   const resultTemplateName = document.getElementById('resultTemplateName');
+  const scoreCard = document.getElementById('scoreCard');
+  const scoreOverall = document.getElementById('scoreOverall');
+  const scoreOverallComment = document.getElementById('scoreOverallComment');
+  const scoreDimensions = document.getElementById('scoreDimensions');
+  const reoptimizeBtn = document.getElementById('reoptimizeBtn');
+  const reoptToast = document.getElementById('reoptToast');
   const textError = document.getElementById('textError');
 
   const resultCard = document.getElementById('resultCard');
@@ -686,6 +692,16 @@
       voiceSelect.value = data.template && data.template.voice ? findVoiceForTemplate(data.template.id) : 'zh-CN-XiaoxiaoNeural';
       currentStyle = style;
       hide(videoPlayer);
+      // Store rewritten text for scoring
+      if (!isMulti) {
+        currentRewriteText = data.rewritten;
+      } else {
+        currentRewriteText = data.versions[0].text;
+      }
+      // Trigger scoring after rewrite
+      currentScoreCard = null;
+      hide(scoreCard);
+      scoreCurrentManuscript();
       show(resultCard);
       setPipeline('rewrite');
       if (rewriteSpeech) rewriteSpeech.textContent = '让我把它变成超好看的风格！';
@@ -733,9 +749,110 @@
     return t ? t.name : id;
   }
 
+  // ============ Scoring ============
+
+  let currentRewriteText = '';
+  let currentScoreCard = null;
+
+  async function scoreCurrentManuscript() {
+    var originalText = extractedText || manualInput.value.trim();
+    hide(scoreCard);
+    setBtnLoading(reoptimizeBtn, true);
+
+    try {
+      var res = await fetch('/api/scorer/score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          originalText: originalText,
+          rewrittenText: currentRewriteText,
+          templateId: selectedTemplateId,
+        }),
+      });
+      var data = await res.json();
+      if (!data.success) throw data.error;
+
+      currentScoreCard = data.scoreCard;
+      renderScoreCard(currentScoreCard);
+      show(scoreCard);
+    } catch (err) {
+      showToast('评分失败: ' + (err.message || '请重试'), 'error');
+    } finally {
+      setBtnLoading(reoptimizeBtn, false);
+    }
+  }
+
+  function renderScoreCard(sc) {
+    scoreOverall.textContent = sc.overallScore.toFixed(1);
+    scoreOverallComment.textContent = sc.overallComment || '';
+
+    scoreDimensions.innerHTML = '';
+    (sc.dimensions || []).forEach(function (d) {
+      var barClass = d.score >= 8 ? 'high' : (d.score >= 5 ? 'mid' : 'low');
+
+      var row = document.createElement('div');
+      row.className = 'score-dim-row';
+      row.innerHTML =
+        '<span class="score-dim-name">' + d.name + '</span>' +
+        '<div class="score-dim-bar"><div class="score-dim-fill ' + barClass + '" style="width:' + (d.score * 10) + '%"></div></div>' +
+        '<span class="score-dim-value">' + d.score + '</span>';
+      scoreDimensions.appendChild(row);
+
+      if (d.suggestion) {
+        var sug = document.createElement('div');
+        sug.className = 'score-dim-suggestion';
+        sug.textContent = '↳ ' + d.suggestion;
+        scoreDimensions.appendChild(sug);
+      }
+    });
+  }
+
+  reoptimizeBtn.addEventListener('click', async function () {
+    if (!currentScoreCard) return;
+    setBtnLoading(reoptimizeBtn, true);
+    hide(reoptToast);
+
+    try {
+      var originalText = extractedText || manualInput.value.trim();
+      var res = await fetch('/api/scorer/reoptimize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          originalText: originalText,
+          rewrittenText: currentRewriteText,
+          scoreCard: currentScoreCard,
+          templateId: selectedTemplateId,
+        }),
+      });
+      var data = await res.json();
+      if (!data.success) throw data.error;
+
+      currentRewriteText = data.rewritten;
+      resultContent.textContent = data.rewritten;
+      if (data.template) {
+        resultTemplateIcon.textContent = data.template.icon;
+        resultTemplateName.textContent = '由「' + data.template.name + '」模板生成（已优化）';
+        show(resultTemplateBadge);
+      }
+
+      // Re-score the optimized version
+      currentScoreCard = null;
+      hide(scoreCard);
+      await scoreCurrentManuscript();
+
+      show(reoptToast);
+      setTimeout(function () { hide(reoptToast); }, 2000);
+      resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (err) {
+      showToast('优化失败: ' + (err.message || '请重试'), 'error');
+    } finally {
+      setBtnLoading(reoptimizeBtn, false);
+    }
+  });
+
   // TTS — Generate audio
   generateAudioBtn.addEventListener('click', async () => {
-    const text = resultContent.textContent;
+    var text = resultContent.textContent;
     if (!text) return;
     hide(ttsError);
     hide(audioPlayer);

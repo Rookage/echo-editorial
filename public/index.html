@@ -305,6 +305,22 @@
       </div>
       <div class="copy-toast hidden" id="copyToast">[✓] 已复制到剪贴板</div>
 
+      <!-- Score Card -->
+      <div class="score-card hidden" id="scoreCard">
+        <div class="score-card-header">
+          <span class="score-card-title">[✦] 稿件评分</span>
+          <span class="score-overall" id="scoreOverall">7.5</span>
+          <span class="score-overall-comment" id="scoreOverallComment"></span>
+        </div>
+        <div class="score-dimensions" id="scoreDimensions">
+          <!-- Populated dynamically by JS -->
+        </div>
+        <div class="score-actions">
+          <button class="btn btn-accent" id="reoptimizeBtn">[↻] 基于建议重新优化</button>
+          <span class="copy-toast hidden" id="reoptToast">[✓] 优化完成</span>
+        </div>
+      </div>
+
       <!-- Audio Generation -->
       <div class="audio-section">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
