@@ -1,4 +1,4 @@
-# CHECKPOINT — 2026-06-30 01:28 CST
+# CHECKPOINT — 2026-06-30 01:55 CST
 
 ## 已完成
 
@@ -11,41 +11,37 @@
 - #10 API Key 日志安全
 
 ### Phase 1（风格模板系统 #12）✅
-- 8 套模板 JSON（templates/）：xhs, douyin, narrative, educational, product-seeding, late-night-radio, wechat-article, sharp-commentary
-- services/templateManager.js — 加载/缓存/查询/更新
-- routes/templates.js — GET /api/templates, GET :id, PUT :id
-- services/rewriter.js — 模板驱动 + rewriteMultipleVersions() 多版本
-- routes/rewrite.js — 返回 { template } + POST /multi
-- public/index.html — 模板选择器网格 + 模板徽章 + 版本切换器
-- public/css/style.css — 模板卡片/徽章/版本切换器
-- public/js/main.js — 动态模板加载/选择/语音联动/多版本渲染
+- 8 套模板 JSON：xhs, douyin, narrative, educational, product-seeding, late-night-radio, wechat-article, sharp-commentary
+- services/templateManager.js + routes/templates.js
+- services/rewriter.js 模板驱动 + rewriteMultipleVersions()
+- 前端：模板选择器网格、语音联动、模板徽章、版本切换器
 
 ### Phase 2（稿件评分 #13）✅
-- services/scorer.js — scoreManuscript() 6维评分 + reOptimize() 基于建议重优化
-- routes/scorer.js — POST /api/scorer/score + POST /api/scorer/reoptimize
-- public/index.html — 评分卡（总分 + 6维度 + 重优化按钮）
-- public/css/style.css — 评分卡/像素进度条（红/金/绿分级）/建议行/按钮区
-- public/js/main.js — 改写完成自动触发评分 → renderScoreCard() → 一键重优化 → 再评分链
-- server.js — 挂载 /api/scorer
+- services/scorer.js：6维评分（标题/钩子/结构/平台/口语/转化）+ reOptimize()
+- routes/scorer.js：POST /api/scorer/score + /api/scorer/reoptimize
+- 前端：评分卡（像素进度条红/金/绿）+ 一键重优化链
+
+### Phase 3（稿件历史 #11）✅
+- services/historyStore.js：JSON 文件持久化，listRecords/getRecord/deleteRecord
+- routes/history.js：GET + GET :id + DELETE
+- routes/rewrite.js：改写后自动保存到 history，多版本共享 batchId
+- 前端：历史面板（20条列表、查看/删除、点击恢复完整状态含评分）
 
 ## 当前状态
 - 所有代码已推送到 Rookage/echo-editorial master 分支
 - npm run check 全部通过
-- 远程 commit: 9a96d97
+- 远程 commit: dd462dd
+- 已部署模块：27 个源文件（config + 8 services + 9 routes + 4 utils + 5 public）
 
 ## 下一步（等待你回来继续）
 
-### Phase 3 — 稿件历史与多版本管理 (#11)
-- services/historyStore.js — JSON 文件持久化（history/ 目录）
-- routes/history.js — GET/POST/DELETE 历史记录
-- routes/rewrite.js — 改写后自动保存到 history
-- public/index.html — 历史面板
-- public/css/style.css — 历史列表样式
-- public/js/main.js — 历史加载/删除/查看/版本对比
-
 ### Phase 4 — 视频升级 (#14)
-- services/videoEnhancer.js + subtitleRenderer.js
-- 字幕生成（SRT）+ 标题封面 + 分镜 + 路由 + UI
+- services/videoEnhancer.js — 字幕生成（SRT）+ 标题封面 + 分镜
+- services/subtitleRenderer.js — SRT 生成 + ffmpeg 字幕烧录
+- routes/video.js — 增强端点或新端点
+- public/index.html — 视频配置选项（字幕/封面复选框）
+- public/css/style.css — 视频配置面板样式
+- public/js/main.js — 增强视频生成流程
 
 ## 触发词
-在 D:/CC/echo-editorial 目录下说「继续」「续写代码」「继续执行」即可接续。
+在 D:/CC/echo-editorial 目录下说「继续」即可接续。
