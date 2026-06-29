@@ -44,5 +44,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`回声编辑部 / Echo Editorial: http://localhost:${PORT}`);
+  console.log(`Echo Editorial / 回声编辑部: http://localhost:${PORT}`);
 });

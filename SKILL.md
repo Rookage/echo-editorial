@@ -1,54 +1,68 @@
-# Douyin Content Toolkit (WHALE)
+# Echo Editorial / 回声编辑部
 
-Convert Douyin videos into rewritten content, voiceovers, and repurposed videos — all automated.
+Use this project when the task is about turning short-video material into editable content assets: transcript, platform copy, voiceover, and vertical video.
 
-## What This Project Does
+## Product Frame
 
-A 5-stage pipeline that takes a Douyin link and outputs:
-1. Video description & metadata (Puppeteer, ~10s)
-2. Full transcript via speech recognition (faster-whisper, 2–5min)
-3. AI rewrite in two styles — Xiaohongshu or Douyin Select (DeepSeek, ~5s)
-4. Text-to-speech voiceover (edge-tts, 6 Chinese voices, ~10s)
-5. Synthesized video with stock footage (Pexels + ffmpeg, ~30s)
+回声编辑部 is a local-first AI editorial room. Its direction is not a one-shot rewrite pipeline, but an editorial workflow:
+
+```text
+source -> topic judgment -> draft -> review -> package -> feedback
+```
+
+Current implementation already supports the content-generation core:
+
+1. Input Douyin URL, local MP4, or manual copy.
+2. Extract page description or full transcript.
+3. Rewrite into Xiaohongshu or Douyin Select styles.
+4. Generate Chinese TTS voiceover.
+5. Synthesize a vertical MP4.
 
 ## Project Structure
 
-```
-douyin-xiaohongshu-rewriter/
-├── server.js          # Express backend, port 3000
-├── transcribe.py      # faster-whisper ASR (daemon mode)
-├── tts.py             # edge-tts with SSML
+```text
+echo-editorial/
+├── server.js             # Express backend, API routes, extraction, rewrite, TTS, video generation
+├── transcribe.py         # faster-whisper ASR, one-shot and daemon mode
+├── tts.py                # edge-tts voice generation with SSML
 ├── services/
-│   └── imageSearch.js # Pexels image search
-├── public/            # Mario NES pixel-art UI
-└── .env.example       # DEEPSEEK_API_KEY, PEXELS_API_KEY
+│   └── imageSearch.js    # DeepSeek keyword generation + Pexels image search
+├── public/               # local app UI
+├── docs/                 # GitHub Pages landing page
+├── PROJECT_CHARTER.md    # product north star
+└── .env.example          # DEEPSEEK_API_KEY, PEXELS_API_KEY
 ```
 
-## Available API Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/extract` | POST | Extract video description `{ url }` |
-| `/api/transcript` | POST | Full speech-to-text `{ url }` |
-| `/api/rewrite` | POST | AI rewrite `{ text, style }` (style: xhs/douyin) |
-| `/api/tts` | POST | Generate MP3 `{ text, voice }` |
-| `/api/video/generate` | POST | Synthesize video `{ text }` |
-| `/api/clear-cache` | POST | Reset browser + ASR + temp files |
-
-## Quick Start
+## Useful Commands
 
 ```bash
-cd douyin-xiaohongshu-rewriter
 npm install
 pip install edge-tts faster-whisper
-cp .env.example .env   # Add DEEPSEEK_API_KEY
-npm start              # http://localhost:3000
+cp .env.example .env
+npm start
 ```
 
-## Common Issues
+Open `http://localhost:3000`.
 
-- **Server won't start**: Make sure `.env` exists with valid `DEEPSEEK_API_KEY`
-- **Puppeteer timeout on Douyin**: Douyin has anti-bot protection. Wait 10s between requests
-- **ASR daemon fails**: Model downloads from `hf-mirror.com`. First run takes 2–3 minutes
-- **ffmpeg not found**: Set `FFMPEG_PATH` in `.env` or install ffmpeg
-- **Windows encoding**: Python subprocesses need `PYTHONIOENCODING=utf-8`
+## API Endpoints
+
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/config` | GET/POST | Read or save local API key config |
+| `/api/extract` | POST | Extract Douyin page description |
+| `/api/transcript` | POST | Download video and generate transcript |
+| `/api/upload` | POST | Upload MP4 and generate transcript |
+| `/api/rewrite` | POST | Rewrite text, style: `xhs` or `douyin` |
+| `/api/tts` | POST | Generate MP3 voiceover |
+| `/api/video/generate` | POST | Generate vertical MP4 |
+| `/api/clear-cache` | POST | Clear browser, temp, video, image, upload cache |
+
+## Product Direction
+
+Keep future work aligned with `PROJECT_CHARTER.md`:
+
+- First: editorial OS, a creator workflow with topic, draft, review, package, feedback.
+- Next: template ecosystem, where editorial methods become shareable assets.
+- Later: publishing and data feedback loops.
+
+Avoid reintroducing legacy naming, pixel-game styling, or visual language that conflicts with Echo Editorial. The direction is bright, clean, efficient, and editorial.

@@ -1,21 +1,31 @@
 {
   "name": "echo-editorial",
   "version": "1.0.0",
-  "description": "回声编辑部 / Echo Editorial — 抖音文案提取、AI改写、TTS语音与视频生成",
+  "description": "回声编辑部：本地优先的 AI 编辑室，把短视频素材转化为稿件、配音和竖屏视频。",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "check": "node --check server.js && node --check config/index.js && node --check utils/url.js && node --check utils/audio.js && node --check utils/text.js && node --check utils/log.js && node --check services/browser.js && node --check services/asr.js && node --check services/douyin.js && node --check services/rewriter.js && node --check services/tts.js && node --check services/video.js && node --check services/imageSearch.js && node --check services/templateManager.js && node --check services/scorer.js && node --check services/historyStore.js && node --check routes/config.js && node --check routes/extract.js && node --check routes/rewrite.js && node --check routes/tts.js && node --check routes/video.js && node --check routes/cache.js && node --check routes/templates.js && node --check routes/scorer.js && node --check routes/history.js && node --check public/js/main.js && python -m py_compile tts.py transcribe.py",
     "test": "npm run check"
   },
-  "keywords": ["echo-editorial", "douyin", "xiaohongshu", "rewriter", "tts", "video"],
+  "keywords": [
+    "echo-editorial",
+    "ai-editor",
+    "content-repurposing",
+    "editorial-workflow",
+    "short-video",
+    "xiaohongshu",
+    "douyin",
+    "tts",
+    "transcription"
+  ],
   "author": "Rookage",
   "license": "MIT",
   "type": "commonjs",
   "dependencies": {
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "multer": "^2.1.1",
+    "multer": "^2.2.0",
     "puppeteer": "^25.0.4"
   }
 }

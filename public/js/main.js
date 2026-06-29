@@ -196,7 +196,7 @@
     }
     // Update rewrite button text
     if (t) {
-      rewriteBtn.textContent = t.icon + ' 改写' + t.name;
+      rewriteXhsBtn.textContent = t.icon + ' 改写' + t.name;
     }
   }
 
@@ -605,13 +605,14 @@
 
   // Toggle manual paste
   function toggleManual(force) {
-    const show = force !== undefined ? force : manualArea.classList.contains('hidden');
-    if (show) {
+    const shouldShow = force !== undefined ? force : manualArea.classList.contains('hidden');
+    if (shouldShow) {
       show(manualArea);
-      toggleManualBtn.textContent = '[?] 手动粘贴文案 ▴';
+      toggleManualBtn.textContent = '手动粘贴文案 ▴';
+      manualInput.focus();
     } else {
       hide(manualArea);
-      toggleManualBtn.textContent = '[?] 手动粘贴文案 ▾';
+      toggleManualBtn.textContent = '手动粘贴文案 ▾';
     }
   }
 

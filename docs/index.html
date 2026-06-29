@@ -3,54 +3,592 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WHALE - 抖音文案智能改写工具</title>
+  <meta name="description" content="回声编辑部 Echo Editorial：一间本地优先的 AI 编辑室，把短视频素材变成可判断、可改写、可审稿、可包装、可复盘的内容资产。">
+  <meta name="keywords" content="回声编辑部, Echo Editorial, AI 编辑室, content repurposing, short video, AI copywriting, ASR, TTS, Douyin, Xiaohongshu">
+  <meta name="theme-color" content="#fbfaf6">
+  <link rel="canonical" href="https://rookage.github.io/echo-editorial/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Echo Editorial">
+  <meta property="og:title" content="Echo Editorial — 回声编辑部">
+  <meta property="og:description" content="从一条短视频开始，完成选题、写稿、审稿、配音、成片与复盘。">
+  <meta property="og:url" content="https://rookage.github.io/echo-editorial/">
+  <meta property="og:image" content="https://rookage.github.io/echo-editorial/assets/echo-editorial-hero.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Echo Editorial — 回声编辑部">
+  <meta name="twitter:description" content="一间本地优先的 AI 编辑室，把短视频素材变成内容资产。">
+  <meta name="twitter:image" content="https://rookage.github.io/echo-editorial/assets/echo-editorial-hero.png">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <title>Echo Editorial — 回声编辑部</title>
   <style>
-    :root { --bg: #fafafa; --surface: #fff; --text: #1e293b; --text2: #64748b; --primary: #2563eb; }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
-    .hero { background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 80px 24px; text-align: center; }
-    .hero h1 { font-size: 42px; margin-bottom: 12px; }
-    .hero p { color: #94a3b8; font-size: 18px; max-width: 600px; margin: 0 auto 24px; }
-    .hero .badge { display: inline-block; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 4px 14px; border-radius: 20px; font-size: 13px; margin: 4px; }
-    .container { max-width: 1000px; margin: 0 auto; padding: 48px 24px; }
-    .pipeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 48px; }
-    @media (max-width: 768px) { .pipeline { grid-template-columns: repeat(2, 1fr); } }
-    .stage { background: var(--surface); border: 1px solid #e5e5e5; border-radius: 10px; padding: 20px; text-align: center; }
-    .stage .num { width: 32px; height: 32px; background: var(--primary); color: #fff; border-radius: 50%; margin: 0 auto 8px; line-height: 32px; font-weight: 700; font-size: 14px; }
-    .stage h3 { font-size: 14px; margin-bottom: 4px; }
-    .stage p { font-size: 12px; color: var(--text2); }
-    .cta { text-align: center; padding: 32px; }
-    .btn { display: inline-block; background: var(--primary); color: #fff; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; }
-    footer { text-align: center; padding: 32px; color: var(--text2); font-size: 13px; border-top: 1px solid #e5e5e5; }
+    :root {
+      --ink: #20252b;
+      --muted: #66717d;
+      --paper: #fbfaf6;
+      --paper-2: #ffffff;
+      --white: #ffffff;
+      --line: #d9e1de;
+      --sky: #5e9fd8;
+      --mint: #46b68f;
+      --coral: #e96f5d;
+      --amber: #f2b84b;
+      --green: #22795e;
+      --shadow: rgba(39, 55, 64, .11);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(32, 37, 43, .03) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(32, 37, 43, .025) 1px, transparent 1px),
+        radial-gradient(circle at 10% 0%, rgba(94,159,216,.16), transparent 32rem),
+        var(--paper);
+      background-size: 48px 48px, 48px 48px, auto, auto;
+      line-height: 1.65;
+    }
+
+    a { color: inherit; text-underline-offset: 4px; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+    .wrap {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      min-height: 92vh;
+      display: grid;
+      align-items: stretch;
+      background: rgba(255,255,255,.68);
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav {
+      position: absolute;
+      inset: 0 0 auto;
+      z-index: 3;
+      padding: 22px 0;
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 850;
+    }
+
+    .mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 8px;
+      background: #ffffffcc;
+      border: 1px solid var(--line);
+      color: var(--green);
+      box-shadow: 0 8px 18px var(--shadow);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 18px;
+      color: #46535c;
+      font-size: 14px;
+    }
+
+    .nav-links a { text-decoration: none; }
+
+    .hero-grid {
+      min-height: 92vh;
+      display: grid;
+      grid-template-columns: minmax(360px, .84fr) minmax(520px, 1.16fr);
+      align-items: center;
+      gap: 28px;
+      padding: 112px 0 54px;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 2;
+      padding: 36px 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      margin: 0 0 20px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: #ffffffd9;
+      border: 1px solid var(--line);
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(46px, 7vw, 84px);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    .hero-copy p {
+      max-width: 620px;
+      margin: 24px 0 0;
+      color: var(--muted);
+      font-size: clamp(18px, 2.1vw, 23px);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      color: var(--ink);
+      font-weight: 800;
+      text-decoration: none;
+      box-shadow: 0 10px 24px var(--shadow);
+    }
+
+    .button.primary {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: var(--white);
+    }
+
+    .hero-image {
+      position: relative;
+      min-height: 620px;
+      align-self: stretch;
+      border-radius: 18px 0 0 18px;
+      background:
+        linear-gradient(90deg, rgba(251,250,246,.92), rgba(251,250,246,.18) 24%, rgba(251,250,246,0) 48%),
+        url("./assets/echo-editorial-hero.png") center / cover no-repeat;
+      box-shadow: 0 30px 80px rgba(39, 55, 64, .16);
+      border: 1px solid rgba(255,255,255,.7);
+    }
+
+    section { padding: 76px 0; }
+
+    .band-light {
+      background: var(--paper-2);
+      border-block: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(280px, 1.1fr);
+      gap: 48px;
+      align-items: start;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .pain-grid,
+    .role-grid,
+    .asset-grid,
+    .proof-grid {
+      display: grid;
+      gap: 14px;
+      margin-top: 42px;
+    }
+
+    .pain-grid { grid-template-columns: repeat(5, 1fr); }
+    .role-grid { grid-template-columns: repeat(4, 1fr); }
+    .asset-grid { grid-template-columns: repeat(3, 1fr); }
+    .proof-grid { grid-template-columns: 1fr 1fr; }
+
+    .card {
+      min-height: 150px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      box-shadow: 0 14px 32px var(--shadow);
+    }
+
+    .card strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .card span,
+    .card p {
+      color: var(--muted);
+    }
+
+    .role .tag {
+      display: inline-flex;
+      margin-bottom: 14px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--green);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .role:nth-child(2) .tag { background: var(--sky); color: #17343c; }
+    .role:nth-child(3) .tag { background: var(--coral); }
+    .role:nth-child(4) .tag { background: var(--amber); color: #2b1b08; }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 42px;
+    }
+
+    .step {
+      padding: 18px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #fff, #f8fbfa);
+      text-align: center;
+      box-shadow: 0 12px 26px var(--shadow);
+    }
+
+    .step b {
+      display: block;
+      color: var(--coral);
+      font-size: 13px;
+    }
+
+    .step span {
+      display: block;
+      margin-top: 6px;
+      font-weight: 850;
+    }
+
+    .terminal {
+      margin-top: 34px;
+      padding: 22px;
+      overflow-x: auto;
+      border-radius: 8px;
+      background: #20252b;
+      color: #f7fbf9;
+      border: 1px solid #39444c;
+      font-size: 14px;
+      box-shadow: 0 18px 38px rgba(29,37,37,.18);
+    }
+
+    .table {
+      width: 100%;
+      margin-top: 34px;
+      border-collapse: collapse;
+      background: var(--white);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      box-shadow: 0 14px 32px var(--shadow);
+    }
+
+    .table th,
+    .table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+      .table th { background: #edf4f1; }
+
+    footer {
+      padding: 40px 0;
+      background: #20252b;
+      color: rgba(255,255,255,.72);
+    }
+
+    footer .wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        padding-top: 96px;
+      }
+
+      .hero-image {
+        min-height: 440px;
+        border-radius: 14px;
+        background:
+          linear-gradient(180deg, rgba(251,250,246,.05), rgba(251,250,246,.05)),
+          url("./assets/echo-editorial-hero.png") center / cover no-repeat;
+      }
+
+      .section-head,
+      .proof-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pain-grid,
+      .role-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .asset-grid,
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .wrap { width: min(100% - 28px, 1120px); }
+      .nav-links { display: none; }
+      .hero { min-height: auto; }
+      .hero-grid {
+        min-height: auto;
+        padding-top: 94px;
+        padding-bottom: 34px;
+        gap: 24px;
+      }
+      .hero-copy { padding: 0; }
+      .hero-image { min-height: 330px; }
+      .pain-grid,
+      .role-grid,
+      .asset-grid,
+      .proof-grid {
+        grid-template-columns: 1fr;
+      }
+      .button { width: 100%; }
+      .table,
+      .table thead,
+      .table tbody,
+      .table tr,
+      .table th,
+      .table td {
+        display: block;
+        width: 100%;
+      }
+      .table thead { display: none; }
+      .table tr { border-bottom: 1px solid var(--line); padding: 10px 0; }
+      .table td { border: 0; padding: 8px 14px; }
+    }
   </style>
 </head>
 <body>
-<div class="hero">
-  <h1>🐳 WHALE</h1>
-  <p>抖音链接 → 视频描述提取 → 逐字稿 → AI改写 → TTS语音 → 视频合成</p>
-  <div>
-    <span class="badge">Puppeteer</span>
-    <span class="badge">faster-whisper</span>
-    <span class="badge">DeepSeek AI</span>
-    <span class="badge">edge-tts</span>
-    <span class="badge">ffmpeg</span>
-  </div>
-</div>
+  <header class="hero">
+    <nav class="nav">
+      <div class="wrap nav-inner">
+        <div class="brand"><span class="mark">EE</span><span>Echo Editorial</span></div>
+        <div class="nav-links">
+          <a href="#why">为什么</a>
+          <a href="#roles">编辑角色</a>
+          <a href="#start">快速开始</a>
+          <a href="https://github.com/Rookage/echo-editorial">GitHub</a>
+        </div>
+      </div>
+    </nav>
 
-<div class="container">
-  <div class="pipeline">
-    <div class="stage"><div class="num">1</div><h3>提取描述</h3><p>Puppeteer 自动爬取</p></div>
-    <div class="stage"><div class="num">2</div><h3>语音转文字</h3><p>Whisper 逐字稿</p></div>
-    <div class="stage"><div class="num">3</div><h3>AI 改写</h3><p>小红书 / 抖音风格</p></div>
-    <div class="stage"><div class="num">4</div><h3>TTS 语音</h3><p>6 种中文语音</p></div>
-    <div class="stage"><div class="num">5</div><h3>视频合成</h3><p>Pexels + ffmpeg</p></div>
-  </div>
-</div>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Local-first AI editorial room</p>
+        <h1>回声编辑部</h1>
+        <p>从一条短视频开始，完成选题、写稿、审稿、配音、成片与复盘。</p>
+        <div class="actions">
+          <a class="button primary" href="https://github.com/Rookage/echo-editorial">查看仓库 / GitHub</a>
+          <a class="button" href="#start">快速开始 / Start</a>
+        </div>
+      </div>
+      <div class="hero-image" aria-label="明亮有序的 AI 内容编辑室"></div>
+    </div>
+  </header>
 
-<div class="cta">
-  <a href="https://github.com/Rookage/whale" class="btn">GitHub 仓库</a>
-</div>
+  <section id="why" class="band-light">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>它不是改写按钮，是一间 AI 编辑室。</h2>
+        <p class="lead">回声编辑部把短视频素材变成可判断、可改写、可审稿、可包装、可复盘的内容资产。当前能力已经跑通“提取、转写、改写、配音、成片”，下一步是把管道升级成编辑工作流。</p>
+      </div>
+      <div class="pain-grid">
+        <div class="card"><strong>暂停手抄</strong><span>有价值的视频，整理起来很慢。</span></div>
+        <div class="card"><strong>平台改写</strong><span>抖音口播不会自动变成小红书笔记。</span></div>
+        <div class="card"><strong>审稿缺位</strong><span>生成一版就结束，没有评分和修改。</span></div>
+        <div class="card"><strong>包装断层</strong><span>文案、配音、字幕、视频散在不同工具。</span></div>
+        <div class="card"><strong>回响丢失</strong><span>发布后的数据没有反哺下一次创作。</span></div>
+      </div>
+    </div>
+  </section>
 
-<footer>MIT License · Built by <a href="https://github.com/Rookage">Rookage</a></footer>
+  <section id="roles">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>编辑部的核心，是判断与分工。</h2>
+        <p class="lead">长期看，回声编辑部不应该只有“小红书 / 抖音精选”两个按钮，而应该有多角色 AI 编辑：先判断素材，再出初稿，再审稿修改，最后做发布包装。</p>
+      </div>
+      <div class="role-grid">
+        <article class="card role">
+          <span class="tag">Topic</span>
+          <strong>选题编辑</strong>
+          <p>判断这个视频值不值得做，适合哪个平台，从哪个角度切入。</p>
+        </article>
+        <article class="card role">
+          <span class="tag">Draft</span>
+          <strong>初稿编辑</strong>
+          <p>根据风格模板生成第一版稿件，保留原内容的事实和情绪。</p>
+        </article>
+        <article class="card role">
+          <span class="tag">Review</span>
+          <strong>审稿编辑</strong>
+          <p>给标题、开头、结构、口语感打分，提出修改建议。</p>
+        </article>
+        <article class="card role">
+          <span class="tag">Package</span>
+          <strong>包装编辑</strong>
+          <p>准备配音、字幕、封面、配图和竖屏视频，进入发布状态。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="band-light">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>最终沉淀三类资产：稿、声、片。</h2>
+        <p class="lead">短视频不是被搬运，而是被重新编辑。每一次生成都应该留下稿件、声音、视频，以及可复用的方法论。</p>
+      </div>
+      <div class="asset-grid">
+        <article class="card">
+          <strong>稿 / Draft</strong>
+          <p>平台文案、标题、标签、口播稿、风格模板和审稿建议。</p>
+        </article>
+        <article class="card">
+          <strong>声 / Voice</strong>
+          <p>TTS（文字转语音）生成中文旁白，支持语速和声音风格。</p>
+        </article>
+        <article class="card">
+          <strong>片 / Cut</strong>
+          <p>配图、字幕、音频和 1080x1920 竖屏视频，形成最小成片闭环。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <h2>当前已经跑通的 5 步管线。</h2>
+        <p class="lead">它现在仍是早期本地工具，但基础路径已经成立。后续工程会围绕稳定性、模块化和编辑工作流继续升级。</p>
+      </div>
+      <div class="pipeline">
+        <div class="step"><b>01</b><span>输入<br>Input</span></div>
+        <div class="step"><b>02</b><span>转写<br>Transcribe</span></div>
+        <div class="step"><b>03</b><span>改写<br>Rewrite</span></div>
+        <div class="step"><b>04</b><span>配音<br>Voice</span></div>
+        <div class="step"><b>05</b><span>成片<br>Cut</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band-light" id="start">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>本地启动，一条链接开始。</h2>
+        <p class="lead">先配置 DeepSeek API Key。Pexels API Key 可选，只在生成带配图视频时需要。</p>
+      </div>
+      <pre class="terminal"><code>git clone https://github.com/Rookage/echo-editorial.git
+cd echo-editorial
+
+npm install
+pip install edge-tts faster-whisper
+
+cp .env.example .env
+npm start
+
+# open http://localhost:3000</code></pre>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <h2>好工具要知道自己的边界。</h2>
+        <p class="lead">当前版本已经能用，但还不是完整编辑 OS。工程侧会先修稳定性，产品侧再补选题、审稿、模板、历史和复盘。</p>
+      </div>
+      <div class="proof-grid">
+        <article class="card">
+          <strong>已具备</strong>
+          <p>抖音链接提取、本地 MP4 转写、小红书 / 抖音精选改写、中文配音、Pexels 配图、ffmpeg 竖屏视频合成。</p>
+        </article>
+        <article class="card">
+          <strong>待打磨</strong>
+          <p>server.js 模块化、路径配置、真实测试、CI 增强、视频分镜、模板系统、审稿评分、发布数据回响。</p>
+        </article>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>路线</th>
+            <th>终局</th>
+            <th>核心赌注</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>A. 编辑 OS</td>
+            <td>创作者的全流程内容工作台</td>
+            <td>多角色 AI 编辑 + 编辑方法论</td>
+          </tr>
+          <tr>
+            <td>B. 模板生态</td>
+            <td>风格模板的 GitHub / Notion 模板市场</td>
+            <td>社区增长 + 模板资产</td>
+          </tr>
+          <tr>
+            <td>C. 分发网络</td>
+            <td>多平台发布 + 数据回馈闭环</td>
+            <td>平台 API + 数据分析</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <span>Echo Editorial — 回声编辑部 / AI editorial room</span>
+      <span><a href="https://github.com/Rookage/echo-editorial">GitHub</a> · <a href="https://github.com/Rookage/echo-editorial/blob/master/PROJECT_CHARTER.md">Project Charter</a></span>
+    </div>
+  </footer>
 </body>
 </html>
