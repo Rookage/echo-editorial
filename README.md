@@ -6,7 +6,7 @@
 <h3 align="center">把短视频的回声，整理成新的稿、新的声音、新的视频。</h3>
 
 <p align="center">
-  <a href="https://rookage.github.io/whale/">项目主页</a>
+  <a href="https://rookage.github.io/echo-editorial/">项目主页</a>
   ·
   <a href="#快速开始">快速开始</a>
   ·
@@ -63,8 +63,8 @@
 ## 快速开始
 
 ```bash
-git clone https://github.com/Rookage/whale.git
-cd whale
+git clone https://github.com/Rookage/echo-editorial.git
+cd echo-editorial
 
 npm install
 pip install edge-tts faster-whisper
