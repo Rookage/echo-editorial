@@ -1,14 +1,22 @@
 {
-  "name": "douyin-xiaohongshu-rewriter",
+  "name": "echo-editorial",
   "version": "1.0.0",
-  "description": "抖音→小红书文案改写工具，自动提取视频文案并用AI改写为小红书风格",
+  "description": "回声编辑部：本地优先的 AI 编辑室，把短视频素材转化为稿件、配音和竖屏视频。",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"No test suite configured yet\" && exit 0"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "ai-editor",
+    "content-repurposing",
+    "short-video",
+    "xiaohongshu",
+    "douyin",
+    "tts",
+    "transcription"
+  ],
+  "author": "Rookage",
   "license": "MIT",
   "type": "commonjs",
   "dependencies": {

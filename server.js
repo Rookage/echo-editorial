@@ -1071,5 +1071,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🔄 抖音→小红书文案改写工具: http://localhost:${PORT}`);
+  console.log(`Echo Editorial / 回声编辑部: http://localhost:${PORT}`);
 });

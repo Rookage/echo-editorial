@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="回声编辑部 Echo Editorial：一间本地优先的 AI 编辑室，把短视频素材变成可判断、可改写、可审稿、可包装、可复盘的内容资产。">
   <meta name="keywords" content="回声编辑部, Echo Editorial, AI 编辑室, content repurposing, short video, AI copywriting, ASR, TTS, Douyin, Xiaohongshu">
-  <meta name="theme-color" content="#f7f1e8">
+  <meta name="theme-color" content="#fbfaf6">
   <link rel="canonical" href="https://rookage.github.io/echo-editorial/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Echo Editorial">
@@ -20,18 +20,18 @@
   <title>Echo Editorial — 回声编辑部</title>
   <style>
     :root {
-      --ink: #1d2525;
-      --muted: #65706c;
-      --paper: #f7f1e8;
-      --paper-2: #fffaf2;
+      --ink: #20252b;
+      --muted: #66717d;
+      --paper: #fbfaf6;
+      --paper-2: #ffffff;
       --white: #ffffff;
-      --line: #dfd4c3;
-      --sky: #8ec5d6;
-      --mint: #9fcfbd;
-      --coral: #d97867;
-      --amber: #d99a45;
-      --green: #557764;
-      --shadow: rgba(72, 52, 30, .12);
+      --line: #d9e1de;
+      --sky: #5e9fd8;
+      --mint: #46b68f;
+      --coral: #e96f5d;
+      --amber: #f2b84b;
+      --green: #22795e;
+      --shadow: rgba(39, 55, 64, .11);
     }
 
     * { box-sizing: border-box; }
@@ -41,7 +41,12 @@
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
       color: var(--ink);
-      background: var(--paper);
+      background:
+        linear-gradient(90deg, rgba(32, 37, 43, .03) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(32, 37, 43, .025) 1px, transparent 1px),
+        radial-gradient(circle at 10% 0%, rgba(94,159,216,.16), transparent 32rem),
+        var(--paper);
+      background-size: 48px 48px, 48px 48px, auto, auto;
       line-height: 1.65;
     }
 
@@ -57,7 +62,7 @@
       min-height: 92vh;
       display: grid;
       align-items: stretch;
-      background: var(--paper-2);
+      background: rgba(255,255,255,.68);
       overflow: hidden;
       border-bottom: 1px solid var(--line);
     }
@@ -88,7 +93,7 @@
       width: 34px;
       height: 34px;
       place-items: center;
-      border-radius: 10px;
+      border-radius: 8px;
       background: #ffffffcc;
       border: 1px solid var(--line);
       color: var(--green);
@@ -98,7 +103,7 @@
     .nav-links {
       display: flex;
       gap: 18px;
-      color: #485551;
+      color: #46535c;
       font-size: 14px;
     }
 
@@ -124,7 +129,7 @@
       margin: 0 0 20px;
       padding: 7px 11px;
       border-radius: 999px;
-      background: #ffffffcc;
+      background: #ffffffd9;
       border: 1px solid var(--line);
       color: var(--green);
       font-size: 13px;
@@ -158,7 +163,7 @@
       justify-content: center;
       min-height: 46px;
       padding: 0 18px;
-      border-radius: 10px;
+      border-radius: 8px;
       border: 1px solid var(--line);
       background: var(--white);
       color: var(--ink);
@@ -177,11 +182,11 @@
       position: relative;
       min-height: 620px;
       align-self: stretch;
-      border-radius: 28px 0 0 28px;
+      border-radius: 18px 0 0 18px;
       background:
-        linear-gradient(90deg, rgba(247,241,232,.92), rgba(247,241,232,.16) 24%, rgba(247,241,232,0) 46%),
+        linear-gradient(90deg, rgba(251,250,246,.92), rgba(251,250,246,.18) 24%, rgba(251,250,246,0) 48%),
         url("./assets/echo-editorial-hero.png") center / cover no-repeat;
-      box-shadow: 0 30px 80px rgba(83, 62, 36, .18);
+      box-shadow: 0 30px 80px rgba(39, 55, 64, .16);
       border: 1px solid rgba(255,255,255,.7);
     }
 
@@ -230,7 +235,7 @@
       min-height: 150px;
       padding: 22px;
       border: 1px solid var(--line);
-      border-radius: 14px;
+      border-radius: 8px;
       background: var(--white);
       box-shadow: 0 14px 32px var(--shadow);
     }
@@ -271,8 +276,8 @@
     .step {
       padding: 18px 12px;
       border: 1px solid var(--line);
-      border-radius: 14px;
-      background: linear-gradient(180deg, #fff, #fff8ed);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #fff, #f8fbfa);
       text-align: center;
       box-shadow: 0 12px 26px var(--shadow);
     }
@@ -293,10 +298,10 @@
       margin-top: 34px;
       padding: 22px;
       overflow-x: auto;
-      border-radius: 14px;
-      background: #1d2525;
-      color: #f8efe2;
-      border: 1px solid #34413e;
+      border-radius: 8px;
+      background: #20252b;
+      color: #f7fbf9;
+      border: 1px solid #39444c;
       font-size: 14px;
       box-shadow: 0 18px 38px rgba(29,37,37,.18);
     }
@@ -306,7 +311,7 @@
       margin-top: 34px;
       border-collapse: collapse;
       background: var(--white);
-      border-radius: 14px;
+      border-radius: 8px;
       overflow: hidden;
       border: 1px solid var(--line);
       box-shadow: 0 14px 32px var(--shadow);
@@ -320,11 +325,11 @@
       vertical-align: top;
     }
 
-    .table th { background: #efe4d3; }
+      .table th { background: #edf4f1; }
 
     footer {
       padding: 40px 0;
-      background: #1d2525;
+      background: #20252b;
       color: rgba(255,255,255,.72);
     }
 
@@ -343,9 +348,9 @@
 
       .hero-image {
         min-height: 440px;
-        border-radius: 24px;
+        border-radius: 14px;
         background:
-          linear-gradient(180deg, rgba(247,241,232,.05), rgba(247,241,232,.05)),
+          linear-gradient(180deg, rgba(251,250,246,.05), rgba(251,250,246,.05)),
           url("./assets/echo-editorial-hero.png") center / cover no-repeat;
       }
 
