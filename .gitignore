@@ -6,3 +6,4 @@ video/
 images/
 uploads/
 temp/
+__pycache__/

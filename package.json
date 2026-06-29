@@ -1,14 +1,15 @@
 {
-  "name": "douyin-xiaohongshu-rewriter",
+  "name": "echo-editorial",
   "version": "1.0.0",
-  "description": "抖音→小红书文案改写工具，自动提取视频文案并用AI改写为小红书风格",
+  "description": "回声编辑部 / Echo Editorial — 抖音文案提取、AI改写、TTS语音与视频生成",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "check": "node --check server.js && node --check config/index.js && node --check utils/url.js && node --check utils/audio.js && node --check utils/text.js && node --check services/browser.js && node --check services/asr.js && node --check services/douyin.js && node --check services/rewriter.js && node --check services/tts.js && node --check services/video.js && node --check services/imageSearch.js && node --check routes/config.js && node --check routes/extract.js && node --check routes/rewrite.js && node --check routes/tts.js && node --check routes/video.js && node --check routes/cache.js && node --check public/js/main.js && python -m py_compile tts.py transcribe.py",
+    "test": "npm run check"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["echo-editorial", "douyin", "xiaohongshu", "rewriter", "tts", "video"],
+  "author": "Rookage",
   "license": "MIT",
   "type": "commonjs",
   "dependencies": {
