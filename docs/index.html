@@ -3,98 +3,149 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>回声编辑部 Echo Editorial</title>
-  <meta name="description" content="回声编辑部：把短视频的回声，整理成新的稿、新的声音、新的视频。">
+  <meta name="description" content="回声编辑部 Echo Editorial：一间本地优先的 AI 编辑室，把短视频素材变成可判断、可改写、可审稿、可包装、可复盘的内容资产。">
+  <meta name="keywords" content="回声编辑部, Echo Editorial, AI 编辑室, content repurposing, short video, AI copywriting, ASR, TTS, Douyin, Xiaohongshu">
+  <meta name="theme-color" content="#f7f1e8">
+  <link rel="canonical" href="https://rookage.github.io/echo-editorial/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Echo Editorial">
+  <meta property="og:title" content="Echo Editorial — 回声编辑部">
+  <meta property="og:description" content="从一条短视频开始，完成选题、写稿、审稿、配音、成片与复盘。">
+  <meta property="og:url" content="https://rookage.github.io/echo-editorial/">
+  <meta property="og:image" content="https://rookage.github.io/echo-editorial/assets/echo-editorial-hero.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Echo Editorial — 回声编辑部">
+  <meta name="twitter:description" content="一间本地优先的 AI 编辑室，把短视频素材变成内容资产。">
+  <meta name="twitter:image" content="https://rookage.github.io/echo-editorial/assets/echo-editorial-hero.png">
+  <title>Echo Editorial — 回声编辑部</title>
   <style>
     :root {
-      --ink: #161616;
-      --paper: #f4efe4;
-      --paper-soft: #fffaf0;
-      --muted: #6f675c;
-      --line: #d7c7ad;
-      --accent: #b45f3a;
-      --accent-deep: #783b2a;
-      --blue: #335c67;
-      --green: #506d5a;
-      --shadow: rgba(22, 22, 22, 0.18);
+      --ink: #1d2525;
+      --muted: #65706c;
+      --paper: #f7f1e8;
+      --paper-2: #fffaf2;
+      --white: #ffffff;
+      --line: #dfd4c3;
+      --sky: #8ec5d6;
+      --mint: #9fcfbd;
+      --coral: #d97867;
+      --amber: #d99a45;
+      --green: #557764;
+      --shadow: rgba(72, 52, 30, .12);
     }
 
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
       color: var(--ink);
-      background:
-        linear-gradient(90deg, rgba(22,22,22,0.035) 1px, transparent 1px),
-        linear-gradient(0deg, rgba(22,22,22,0.035) 1px, transparent 1px),
-        var(--paper);
-      background-size: 28px 28px;
+      background: var(--paper);
       line-height: 1.65;
     }
 
-    a { color: inherit; }
+    a { color: inherit; text-underline-offset: 4px; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+    .wrap {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+    }
 
     .hero {
       min-height: 92vh;
       display: grid;
-      align-items: center;
-      padding: 48px 24px 36px;
-      position: relative;
+      align-items: stretch;
+      background: var(--paper-2);
       overflow: hidden;
-      background:
-        radial-gradient(circle at 18% 24%, rgba(180, 95, 58, 0.16), transparent 30%),
-        radial-gradient(circle at 84% 12%, rgba(51, 92, 103, 0.18), transparent 28%),
-        linear-gradient(145deg, #2b241f 0%, #181716 52%, #33251f 100%);
-      color: var(--paper-soft);
+      border-bottom: 1px solid var(--line);
     }
 
-    .hero::after {
-      content: "";
+    .nav {
       position: absolute;
-      inset: auto 0 0;
-      height: 24vh;
-      background:
-        linear-gradient(transparent, rgba(0,0,0,0.35)),
-        repeating-linear-gradient(90deg, rgba(255,255,255,0.08) 0 2px, transparent 2px 56px);
-      pointer-events: none;
+      inset: 0 0 auto;
+      z-index: 3;
+      padding: 22px 0;
     }
 
-    .hero-inner {
-      width: min(1120px, 100%);
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: minmax(0, 1.04fr) minmax(320px, 0.96fr);
-      gap: 42px;
+    .nav-inner {
+      display: flex;
       align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 850;
+    }
+
+    .mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 10px;
+      background: #ffffffcc;
+      border: 1px solid var(--line);
+      color: var(--green);
+      box-shadow: 0 8px 18px var(--shadow);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 18px;
+      color: #485551;
+      font-size: 14px;
+    }
+
+    .nav-links a { text-decoration: none; }
+
+    .hero-grid {
+      min-height: 92vh;
+      display: grid;
+      grid-template-columns: minmax(360px, .84fr) minmax(520px, 1.16fr);
+      align-items: center;
+      gap: 28px;
+      padding: 112px 0 54px;
+    }
+
+    .hero-copy {
       position: relative;
-      z-index: 1;
+      z-index: 2;
+      padding: 36px 0;
     }
 
     .eyebrow {
-      margin: 0 0 18px;
-      color: #d9c1a5;
-      letter-spacing: 0.18em;
+      display: inline-flex;
+      margin: 0 0 20px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: #ffffffcc;
+      border: 1px solid var(--line);
+      color: var(--green);
       font-size: 13px;
-      text-transform: uppercase;
+      font-weight: 800;
     }
 
     h1 {
       margin: 0;
-      font-size: clamp(44px, 8vw, 86px);
+      font-size: clamp(46px, 7vw, 84px);
       line-height: 1.02;
-      font-weight: 760;
       letter-spacing: 0;
     }
 
-    .lead {
-      max-width: 640px;
+    .hero-copy p {
+      max-width: 620px;
       margin: 24px 0 0;
-      color: #eadccb;
-      font-size: clamp(18px, 2.2vw, 24px);
+      color: var(--muted);
+      font-size: clamp(18px, 2.1vw, 23px);
     }
 
-    .hero-actions {
+    .actions {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
@@ -104,291 +155,434 @@
     .button {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       min-height: 46px;
-      padding: 11px 18px;
-      border: 1px solid rgba(244,239,228,0.55);
-      color: var(--paper-soft);
+      padding: 0 18px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      color: var(--ink);
+      font-weight: 800;
       text-decoration: none;
-      font-weight: 700;
-      background: rgba(255,255,255,0.08);
+      box-shadow: 0 10px 24px var(--shadow);
     }
 
     .button.primary {
-      background: var(--accent);
-      border-color: var(--accent);
+      background: var(--ink);
+      border-color: var(--ink);
+      color: var(--white);
     }
 
-    .desk {
+    .hero-image {
       position: relative;
-      min-height: 430px;
-      padding: 26px;
-      border: 1px solid rgba(244,239,228,0.24);
+      min-height: 620px;
+      align-self: stretch;
+      border-radius: 28px 0 0 28px;
       background:
-        linear-gradient(160deg, rgba(255,255,255,0.1), rgba(255,255,255,0.025)),
-        rgba(20, 18, 16, 0.45);
-      box-shadow: 0 24px 80px rgba(0,0,0,0.32);
+        linear-gradient(90deg, rgba(247,241,232,.92), rgba(247,241,232,.16) 24%, rgba(247,241,232,0) 46%),
+        url("./assets/echo-editorial-hero.png") center / cover no-repeat;
+      box-shadow: 0 30px 80px rgba(83, 62, 36, .18);
+      border: 1px solid rgba(255,255,255,.7);
     }
 
-    .paper {
-      position: absolute;
-      inset: 34px 32px auto;
-      min-height: 260px;
-      padding: 24px 24px 26px;
-      background: var(--paper-soft);
-      color: var(--ink);
-      box-shadow: 0 18px 42px rgba(0,0,0,0.28);
-      transform: rotate(-2deg);
+    section { padding: 76px 0; }
+
+    .band-light {
+      background: var(--paper-2);
+      border-block: 1px solid var(--line);
     }
 
-    .paper h2 {
-      margin: 0 0 12px;
-      font-size: 22px;
-    }
-
-    .paper p {
-      margin: 9px 0;
-      color: #4e463d;
-    }
-
-    .mark {
-      display: inline-block;
-      margin-top: 14px;
-      padding: 6px 10px;
-      border: 1px solid var(--accent);
-      color: var(--accent-deep);
-      font-weight: 700;
-      transform: rotate(2deg);
-    }
-
-    .wave {
-      position: absolute;
-      left: 18px;
-      right: 18px;
-      bottom: 34px;
+    .section-head {
       display: grid;
-      grid-template-columns: repeat(32, 1fr);
-      gap: 5px;
-      align-items: end;
-      height: 88px;
+      grid-template-columns: minmax(0, .9fr) minmax(280px, 1.1fr);
+      gap: 48px;
+      align-items: start;
     }
 
-    .wave span {
-      display: block;
-      min-height: 10px;
-      background: #d8a36e;
-      opacity: 0.92;
+    h2 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.1;
+      letter-spacing: 0;
     }
 
-    .wave span:nth-child(3n) { height: 72px; background: #83a598; }
-    .wave span:nth-child(4n) { height: 34px; background: #c46f4a; }
-    .wave span:nth-child(5n) { height: 58px; }
-
-    main {
-      width: min(1120px, 100%);
-      margin: 0 auto;
-      padding: 70px 24px;
-    }
-
-    .section-title {
-      margin: 0 0 20px;
-      font-size: clamp(28px, 4vw, 44px);
-      line-height: 1.16;
-    }
-
-    .section-copy {
-      max-width: 780px;
-      margin: 0 0 34px;
+    .lead {
+      margin: 0;
       color: var(--muted);
       font-size: 18px;
     }
 
-    .flow {
+    .pain-grid,
+    .role-grid,
+    .asset-grid,
+    .proof-grid {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
-      margin: 32px 0 72px;
+      gap: 14px;
+      margin-top: 42px;
+    }
+
+    .pain-grid { grid-template-columns: repeat(5, 1fr); }
+    .role-grid { grid-template-columns: repeat(4, 1fr); }
+    .asset-grid { grid-template-columns: repeat(3, 1fr); }
+    .proof-grid { grid-template-columns: 1fr 1fr; }
+
+    .card {
+      min-height: 150px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--white);
+      box-shadow: 0 14px 32px var(--shadow);
+    }
+
+    .card strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .card span,
+    .card p {
+      color: var(--muted);
+    }
+
+    .role .tag {
+      display: inline-flex;
+      margin-bottom: 14px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--green);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .role:nth-child(2) .tag { background: var(--sky); color: #17343c; }
+    .role:nth-child(3) .tag { background: var(--coral); }
+    .role:nth-child(4) .tag { background: var(--amber); color: #2b1b08; }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 42px;
     }
 
     .step {
-      min-height: 190px;
-      padding: 20px;
-      background: var(--paper-soft);
+      padding: 18px 12px;
       border: 1px solid var(--line);
-      box-shadow: 0 10px 28px var(--shadow);
+      border-radius: 14px;
+      background: linear-gradient(180deg, #fff, #fff8ed);
+      text-align: center;
+      box-shadow: 0 12px 26px var(--shadow);
     }
 
-    .step-num {
-      color: var(--accent);
-      font-weight: 800;
+    .step b {
+      display: block;
+      color: var(--coral);
       font-size: 13px;
-      letter-spacing: 0.12em;
     }
 
-    .step h3 {
-      margin: 22px 0 8px;
-      font-size: 21px;
+    .step span {
+      display: block;
+      margin-top: 6px;
+      font-weight: 850;
     }
 
-    .step p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 15px;
+    .terminal {
+      margin-top: 34px;
+      padding: 22px;
+      overflow-x: auto;
+      border-radius: 14px;
+      background: #1d2525;
+      color: #f8efe2;
+      border: 1px solid #34413e;
+      font-size: 14px;
+      box-shadow: 0 18px 38px rgba(29,37,37,.18);
     }
 
-    .split {
-      display: grid;
-      grid-template-columns: 0.9fr 1.1fr;
-      gap: 42px;
-      align-items: start;
-      margin-top: 24px;
+    .table {
+      width: 100%;
+      margin-top: 34px;
+      border-collapse: collapse;
+      background: var(--white);
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      box-shadow: 0 14px 32px var(--shadow);
     }
 
-    .note {
-      padding: 26px;
-      background: #263238;
-      color: var(--paper-soft);
-      box-shadow: 0 18px 44px var(--shadow);
+    .table th,
+    .table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
     }
 
-    .note h3 { margin: 0 0 12px; font-size: 22px; }
-    .note p { margin: 0; color: #d7dedb; }
-
-    .terms {
-      display: grid;
-      gap: 12px;
-    }
-
-    .term {
-      padding: 18px 20px;
-      border-left: 4px solid var(--accent);
-      background: rgba(255,250,240,0.8);
-    }
-
-    .term strong { display: block; margin-bottom: 4px; }
-    .term span { color: var(--muted); }
+    .table th { background: #efe4d3; }
 
     footer {
-      border-top: 1px solid var(--line);
-      padding: 28px 24px 42px;
-      color: var(--muted);
-      text-align: center;
+      padding: 40px 0;
+      background: #1d2525;
+      color: rgba(255,255,255,.72);
     }
 
-    @media (max-width: 900px) {
-      .hero-inner, .split { grid-template-columns: 1fr; }
+    footer .wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        padding-top: 96px;
+      }
+
+      .hero-image {
+        min-height: 440px;
+        border-radius: 24px;
+        background:
+          linear-gradient(180deg, rgba(247,241,232,.05), rgba(247,241,232,.05)),
+          url("./assets/echo-editorial-hero.png") center / cover no-repeat;
+      }
+
+      .section-head,
+      .proof-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pain-grid,
+      .role-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .asset-grid,
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .wrap { width: min(100% - 28px, 1120px); }
+      .nav-links { display: none; }
       .hero { min-height: auto; }
-      .flow { grid-template-columns: repeat(2, 1fr); }
-      .desk { min-height: 380px; }
-    }
-
-    @media (max-width: 560px) {
-      .hero { padding: 36px 16px 26px; }
-      main { padding: 52px 16px; }
-      .flow { grid-template-columns: 1fr; }
-      .paper { inset: 24px 20px auto; }
-      .desk { padding: 18px; }
-      .button { width: 100%; justify-content: center; }
+      .hero-grid {
+        min-height: auto;
+        padding-top: 94px;
+        padding-bottom: 34px;
+        gap: 24px;
+      }
+      .hero-copy { padding: 0; }
+      .hero-image { min-height: 330px; }
+      .pain-grid,
+      .role-grid,
+      .asset-grid,
+      .proof-grid {
+        grid-template-columns: 1fr;
+      }
+      .button { width: 100%; }
+      .table,
+      .table thead,
+      .table tbody,
+      .table tr,
+      .table th,
+      .table td {
+        display: block;
+        width: 100%;
+      }
+      .table thead { display: none; }
+      .table tr { border-bottom: 1px solid var(--line); padding: 10px 0; }
+      .table td { border: 0; padding: 8px 14px; }
     }
   </style>
 </head>
 <body>
-  <section class="hero">
-    <div class="hero-inner">
-      <div>
-        <p class="eyebrow">Echo Editorial · Creator Tool</p>
-        <h1>回声编辑部</h1>
-        <p class="lead">把短视频的回声，整理成新的稿、新的声音、新的视频。</p>
-        <div class="hero-actions">
-          <a class="button primary" href="https://github.com/Rookage/echo-editorial">查看 GitHub 仓库</a>
-          <a class="button" href="https://github.com/Rookage/echo-editorial#快速开始">快速开始</a>
+  <header class="hero">
+    <nav class="nav">
+      <div class="wrap nav-inner">
+        <div class="brand"><span class="mark">EE</span><span>Echo Editorial</span></div>
+        <div class="nav-links">
+          <a href="#why">为什么</a>
+          <a href="#roles">编辑角色</a>
+          <a href="#start">快速开始</a>
+          <a href="https://github.com/Rookage/echo-editorial">GitHub</a>
         </div>
       </div>
+    </nav>
 
-      <div class="desk" aria-label="编辑室里的稿纸和声波">
-        <div class="paper">
-          <h2>今日编辑台</h2>
-          <p>原视频：一段被反复播放的短视频。</p>
-          <p>整理：逐字稿、观点、结构、标题。</p>
-          <p>输出：小红书稿、口播稿、配音、竖屏视频。</p>
-          <span class="mark">已整理成稿</span>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Local-first AI editorial room</p>
+        <h1>回声编辑部</h1>
+        <p>从一条短视频开始，完成选题、写稿、审稿、配音、成片与复盘。</p>
+        <div class="actions">
+          <a class="button primary" href="https://github.com/Rookage/echo-editorial">查看仓库 / GitHub</a>
+          <a class="button" href="#start">快速开始 / Start</a>
         </div>
-        <div class="wave" aria-hidden="true">
-          <span style="height:24px"></span><span style="height:48px"></span><span></span><span></span>
-          <span></span><span style="height:30px"></span><span style="height:64px"></span><span></span>
-          <span style="height:20px"></span><span></span><span style="height:76px"></span><span></span>
-          <span style="height:40px"></span><span style="height:22px"></span><span></span><span style="height:66px"></span>
-          <span></span><span style="height:28px"></span><span style="height:54px"></span><span></span>
-          <span style="height:18px"></span><span></span><span style="height:74px"></span><span></span>
-          <span style="height:36px"></span><span style="height:58px"></span><span></span><span></span>
-          <span style="height:24px"></span><span style="height:50px"></span><span></span><span style="height:32px"></span>
-        </div>
+      </div>
+      <div class="hero-image" aria-label="明亮有序的 AI 内容编辑室"></div>
+    </div>
+  </header>
+
+  <section id="why" class="band-light">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>它不是改写按钮，是一间 AI 编辑室。</h2>
+        <p class="lead">回声编辑部把短视频素材变成可判断、可改写、可审稿、可包装、可复盘的内容资产。当前能力已经跑通“提取、转写、改写、配音、成片”，下一步是把管道升级成编辑工作流。</p>
+      </div>
+      <div class="pain-grid">
+        <div class="card"><strong>暂停手抄</strong><span>有价值的视频，整理起来很慢。</span></div>
+        <div class="card"><strong>平台改写</strong><span>抖音口播不会自动变成小红书笔记。</span></div>
+        <div class="card"><strong>审稿缺位</strong><span>生成一版就结束，没有评分和修改。</span></div>
+        <div class="card"><strong>包装断层</strong><span>文案、配音、字幕、视频散在不同工具。</span></div>
+        <div class="card"><strong>回响丢失</strong><span>发布后的数据没有反哺下一次创作。</span></div>
       </div>
     </div>
   </section>
 
-  <main>
-    <section>
-      <h2 class="section-title">不是搬运，是把素材重新编辑成你的表达。</h2>
-      <p class="section-copy">
-        回声编辑部面向内容创作者，把短视频链接、本地 MP4 或手动文案接进同一条工作流：提取、转写、改写、配音、成片。
-      </p>
-
-      <div class="flow">
-        <div class="step">
-          <div class="step-num">01 INPUT</div>
-          <h3>输入</h3>
-          <p>粘贴抖音链接，上传 MP4，或者直接粘贴原始文案。</p>
-        </div>
-        <div class="step">
-          <div class="step-num">02 TRANSCRIBE</div>
-          <h3>转写</h3>
-          <p>ASR（语音识别）把视频里的声音整理成逐字稿。</p>
-        </div>
-        <div class="step">
-          <div class="step-num">03 REWRITE</div>
-          <h3>改写</h3>
-          <p>AI 根据平台语气生成小红书或抖音精选文案。</p>
-        </div>
-        <div class="step">
-          <div class="step-num">04 VOICE</div>
-          <h3>配音</h3>
-          <p>TTS（文字转语音）把稿件变成中文旁白。</p>
-        </div>
-        <div class="step">
-          <div class="step-num">05 VIDEO</div>
-          <h3>成片</h3>
-          <p>ffmpeg 合成配图、音频和竖屏 MP4。</p>
-        </div>
+  <section id="roles">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>编辑部的核心，是判断与分工。</h2>
+        <p class="lead">长期看，回声编辑部不应该只有“小红书 / 抖音精选”两个按钮，而应该有多角色 AI 编辑：先判断素材，再出初稿，再审稿修改，最后做发布包装。</p>
       </div>
-    </section>
+      <div class="role-grid">
+        <article class="card role">
+          <span class="tag">Topic</span>
+          <strong>选题编辑</strong>
+          <p>判断这个视频值不值得做，适合哪个平台，从哪个角度切入。</p>
+        </article>
+        <article class="card role">
+          <span class="tag">Draft</span>
+          <strong>初稿编辑</strong>
+          <p>根据风格模板生成第一版稿件，保留原内容的事实和情绪。</p>
+        </article>
+        <article class="card role">
+          <span class="tag">Review</span>
+          <strong>审稿编辑</strong>
+          <p>给标题、开头、结构、口语感打分，提出修改建议。</p>
+        </article>
+        <article class="card role">
+          <span class="tag">Package</span>
+          <strong>包装编辑</strong>
+          <p>准备配音、字幕、封面、配图和竖屏视频，进入发布状态。</p>
+        </article>
+      </div>
+    </div>
+  </section>
 
-    <section class="split">
-      <div class="note">
-        <h3>一个本地优先的内容工作间</h3>
-        <p>
-          回声编辑部默认在你的电脑上运行。它会调用 DeepSeek、Pexels、edge-tts 等外部服务，但生成的音频、视频和本地配置都留在你的机器上。
-        </p>
+  <section class="band-light">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>最终沉淀三类资产：稿、声、片。</h2>
+        <p class="lead">短视频不是被搬运，而是被重新编辑。每一次生成都应该留下稿件、声音、视频，以及可复用的方法论。</p>
+      </div>
+      <div class="asset-grid">
+        <article class="card">
+          <strong>稿 / Draft</strong>
+          <p>平台文案、标题、标签、口播稿、风格模板和审稿建议。</p>
+        </article>
+        <article class="card">
+          <strong>声 / Voice</strong>
+          <p>TTS（文字转语音）生成中文旁白，支持语速和声音风格。</p>
+        </article>
+        <article class="card">
+          <strong>片 / Cut</strong>
+          <p>配图、字幕、音频和 1080x1920 竖屏视频，形成最小成片闭环。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <h2>当前已经跑通的 5 步管线。</h2>
+        <p class="lead">它现在仍是早期本地工具，但基础路径已经成立。后续工程会围绕稳定性、模块化和编辑工作流继续升级。</p>
+      </div>
+      <div class="pipeline">
+        <div class="step"><b>01</b><span>输入<br>Input</span></div>
+        <div class="step"><b>02</b><span>转写<br>Transcribe</span></div>
+        <div class="step"><b>03</b><span>改写<br>Rewrite</span></div>
+        <div class="step"><b>04</b><span>配音<br>Voice</span></div>
+        <div class="step"><b>05</b><span>成片<br>Cut</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band-light" id="start">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>本地启动，一条链接开始。</h2>
+        <p class="lead">先配置 DeepSeek API Key。Pexels API Key 可选，只在生成带配图视频时需要。</p>
+      </div>
+      <pre class="terminal"><code>git clone https://github.com/Rookage/echo-editorial.git
+cd echo-editorial
+
+npm install
+pip install edge-tts faster-whisper
+
+cp .env.example .env
+npm start
+
+# open http://localhost:3000</code></pre>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <h2>好工具要知道自己的边界。</h2>
+        <p class="lead">当前版本已经能用，但还不是完整编辑 OS。工程侧会先修稳定性，产品侧再补选题、审稿、模板、历史和复盘。</p>
+      </div>
+      <div class="proof-grid">
+        <article class="card">
+          <strong>已具备</strong>
+          <p>抖音链接提取、本地 MP4 转写、小红书 / 抖音精选改写、中文配音、Pexels 配图、ffmpeg 竖屏视频合成。</p>
+        </article>
+        <article class="card">
+          <strong>待打磨</strong>
+          <p>server.js 模块化、路径配置、真实测试、CI 增强、视频分镜、模板系统、审稿评分、发布数据回响。</p>
+        </article>
       </div>
 
-      <div class="terms">
-        <div class="term">
-          <strong>ASR</strong>
-          <span>Automatic Speech Recognition，语音识别：把视频声音转成文字。</span>
-        </div>
-        <div class="term">
-          <strong>TTS</strong>
-          <span>Text-to-Speech，文字转语音：把改写好的稿子生成配音。</span>
-        </div>
-        <div class="term">
-          <strong>CI</strong>
-          <span>Continuous Integration，持续集成：每次提交后自动检查代码有没有明显问题。</span>
-        </div>
-      </div>
-    </section>
-  </main>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>路线</th>
+            <th>终局</th>
+            <th>核心赌注</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>A. 编辑 OS</td>
+            <td>创作者的全流程内容工作台</td>
+            <td>多角色 AI 编辑 + 编辑方法论</td>
+          </tr>
+          <tr>
+            <td>B. 模板生态</td>
+            <td>风格模板的 GitHub / Notion 模板市场</td>
+            <td>社区增长 + 模板资产</td>
+          </tr>
+          <tr>
+            <td>C. 分发网络</td>
+            <td>多平台发布 + 数据回馈闭环</td>
+            <td>平台 API + 数据分析</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
   <footer>
-    回声编辑部 Echo Editorial · MIT License · Built by Rookage
+    <div class="wrap">
+      <span>Echo Editorial — 回声编辑部 / AI editorial room</span>
+      <span><a href="https://github.com/Rookage/echo-editorial">GitHub</a> · <a href="https://github.com/Rookage/echo-editorial/blob/master/PROJECT_CHARTER.md">Project Charter</a></span>
+    </div>
   </footer>
 </body>
 </html>
