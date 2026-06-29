@@ -1,105 +1,12 @@
-// DeepSeek AI Rewriter
+// DeepSeek AI Rewriter — template-driven
 const config = require('../config');
+const templateManager = require('./templateManager');
 
 const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
 
-const PROMPTS = {
-  xhs: `你是拥有10年经验的小红书爆款内容主编，深谙CES评分机制（评论4x>转发4x>收藏1x>点赞1x>关注8x）和搜索流量逻辑。
-你的任务是将原始文案改写为适合小红书图文发布的高互动率内容。
-
-## 核心铁律：保留原文灵魂
-- 必须保留：核心事实/数据、情感基调、个人视角、独特观点
-- 可以改写：句式节奏、语气温度、词汇选择、结构布局
-- 禁止：丢失关键信息、改变情感方向、添加虚假信息或夸大效果
-
-## 标题生成（15-20字）
-从以下6种公式中选择最匹配的，前10字必须含核心关键词：
-A. 数字具象法：数字+人群/场景+具体利益
-B. 情绪触发法：强烈情绪词+共鸣场景
-C. 身份共鸣法：人群标签+场景+利益点
-D. 悬念反差法：反常识观点+省略号
-E. 结果前置法：小努力+大结果
-F. 热点加观点法：热点+反套路+人群
-禁用"最/第一/yyds/绝绝子"等过时或极限词。
-
-## 正文结构（根据内容类型选择）
-- 干货/教程→数字清单型：emoji编号开头，每项1-2行
-- 产品测评→AIDA型：注意→兴趣→欲望→行动
-- 痛点营销→PAS型：问题→放大痛苦→解决方案
-- 人设故事→故事加方法型：亲身经历(约150字)→核心观点→3点方法→金句
-
-## 段落与格式
-- 每段≤3行，单段≤45字，段落间留空行
-- 关键金句独占一行
-- 每段开头用1个emoji做视觉锚点（🔴→⚠️💪✨😊1️⃣2️⃣3️⃣）
-- 用"—"或"· · ·"做弱分割
-
-## 情绪钩子（开头前2句必须命中其一）
-反常识/痛点共鸣/利益钩子/悬念/人群标签/数字冲击/挑衅/故事/对话/提问
-必须制造冲突、好奇或共鸣，2句话内完成。
-
-## 去AI味规则（重要）
-- 打破工整排比，长短句交错（10字短句穿插在25字句中）
-- 消灭"首先/其次/最后/综上所述/由此可见"等书面连接词
-- 消灭"赋能/深耕/优化/闭环/抓手"等空泛词
-- 自然融入口语过渡："说实话""坦白讲""谁懂啊""重点来了""你发现了没"
-- 数字必须具体可感知（不说"显著提升"要说"从每天50阅读涨到380"）
-- 默认第一人称（"我""我们""你"），朋友聊天语气
-- 每100字最多1个高强度情绪词（"绝了""救命""杀疯了"），多了像咆哮
-
-## 标签与结尾
-- 标签5-7个：1个泛标签+2-3个细分标签+2个场景/人群标签
-- 结尾设计互动引导：提问引发讨论/邀请收藏/投票式互动
-
-## 输出格式
-先输出标题（单独一行），空一行后输出正文，最后一行输出话题标签。不要写"标题："等前缀。`,
-
-  douyin: `你是抖音精选专栏的资深作者，擅长将口播内容改写为节奏紧凑、适合朗读的深度图文。
-你的内容会被TTS引擎朗读，因此必须自然口语化、节奏流畅、听觉友好。
-
-## 核心铁律：保留原文灵魂
-- 必须保留：核心事实/数据、情感基调、个人视角、独特观点
-- 可以改写：句式节奏、语气温度、词汇选择、结构布局
-- 禁止：丢失关键信息、改变情感方向、添加虚假信息或夸大效果
-
-## 绝对禁止emoji
-你的输出会被TTS朗读。emoji会被读成"笑脸""爱心""大拇指"等文字，严重破坏听感。
-统一使用标点符号控制语气：问号=语调上扬、感叹号=语气加重、省略号=停顿留白。
-
-## 3秒钩子法则（开头第一句决定完播率）
-从以下7种钩子选1个，第一句就打破信息流惯性：
-1. 情绪杠杆："别怪我没提醒你，..."
-2. 圈定人群："所有[人群]请注意..."
-3. 恐惧/焦虑："千万不要[行为]，尤其是..."
-4. 反常识："你以为[A]，其实是[B]"
-5. 悬念故事："我昨天[事件]，结果..."
-6. 结果冲击："只做了[简单动作]，[惊人结果]"
-7. 认同钩子："我从来不[A]，不是[B]，而是[C]"
-
-## 正文结构（3选1）
-- 三点式：每点=核心观点→场景化解释→一句话总结
-- 递进式：事实→解读→启示→行动建议
-- 对比式：错误做法 vs 正确做法→为什么错→怎么做才对
-每5-10秒给出一个新信息点，15-20秒一次小转折。
-
-## 语言规范（TTS朗读友好）
-- 单句≤30字，关键信息≤15字独占一行
-- 口语化但精简填充词（去掉"这个""那个""就是""然后"等）
-- 书面词替换：总而言之→说白了、综上所述→总结一下、毋庸置疑→不用怀疑
-- 阿拉伯数字优先（"3个信号"比"几个信号"效果好44%）
-- 用换行创造"停顿"，用独占一行的金句制造"重音"
-- 问号和感叹号在TTS中会改变语调，精准使用
-
-## 结尾（4选1，必须引导互动）
-1. 开放式提问："你怎么看？评论区告诉我"
-2. 身份认同："认同的点个赞，让更多人看到"
-3. 收藏引导："先收藏，免得之后找不到"
-4. 挑战行动："敢不敢试7天？回来告诉我结果"
-
-## 输出格式
-直接输出改写后的抖音精选文案，不要写任何前缀说明。
-不需要话题标签（TTS会读出来）。`,
-};
+// Fallback prompts for when no template is available (shouldn't happen if templates/ is populated)
+const FALLBACK_PROMPT = '你是专业的内容改写编辑。请将原始文案改写为更具吸引力的风格。';
+const FALLBACK_USER = '请改写以下内容：\n\n{{text}}';
 
 async function rewriteText(originalText, style = 'xhs') {
   if (!originalText || !originalText.trim()) {
@@ -109,11 +16,10 @@ async function rewriteText(originalText, style = 'xhs') {
     originalText = originalText.slice(0, 8000);
   }
 
-  const prompt = PROMPTS[style] || PROMPTS.xhs;
-  const userMessages = {
-    xhs: `请将以下原始文案改写为小红书爆款风格。要求：保留原文核心观点和事实，增强情绪共鸣和阅读体验，用第一人称口语化表达。\n\n---原始文案---\n${originalText}\n---`,
-    douyin: `请将以下原始文案改写为抖音精选风格（适合TTS朗读）。要求：保留原文核心观点和事实，增强节奏感和听觉体验，用自然口语化表达，绝对不使用emoji。\n\n---原始文案---\n${originalText}\n---`,
-  };
+  const template = templateManager.getTemplate(style);
+  const systemPrompt = template?.systemPrompt || FALLBACK_PROMPT;
+  const userTemplate = template?.userPromptTemplate || FALLBACK_USER;
+  const userMessage = userTemplate.replace('{{text}}', originalText);
 
   let res;
   try {
@@ -126,8 +32,8 @@ async function rewriteText(originalText, style = 'xhs') {
       body: JSON.stringify({
         model: 'deepseek-chat',
         messages: [
-          { role: 'system', content: prompt },
-          { role: 'user', content: (userMessages[style] || userMessages.xhs) },
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userMessage },
         ],
         max_tokens: 2048,
         temperature: 0.8,
@@ -145,7 +51,69 @@ async function rewriteText(originalText, style = 'xhs') {
   const content = data.choices?.[0]?.message?.content;
   if (!content) throw { code: 'DEEPSEEK_API_ERROR', message: 'AI 未能生成内容，请重试' };
 
-  return content.trim();
+  return {
+    text: content.trim(),
+    template: {
+      id: template?.id || style,
+      name: template?.name || style,
+      icon: template?.icon || '',
+    },
+  };
 }
 
-module.exports = { rewriteText };
+// Generate multiple versions with slight temperature variation
+async function rewriteMultipleVersions(originalText, style = 'xhs', count = 3) {
+  if (!originalText || !originalText.trim()) {
+    throw { code: 'EMPTY_TEXT', message: '请先输入或提取文字内容' };
+  }
+  if (originalText.length > 8000) {
+    originalText = originalText.slice(0, 8000);
+  }
+
+  const template = templateManager.getTemplate(style);
+  const systemPrompt = template?.systemPrompt || FALLBACK_PROMPT;
+  const userTemplate = template?.userPromptTemplate || FALLBACK_USER;
+  const userMessage = userTemplate.replace('{{text}}', originalText);
+
+  const versions = [];
+  const temperatures = Array.from({ length: count }, (_, i) => 0.6 + (i * 0.2)); // 0.6, 0.8, 1.0
+
+  for (const temp of temperatures) {
+    try {
+      const res = await fetch(DEEPSEEK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${config.runtimeConfig.deepseekApiKey}`,
+        },
+        body: JSON.stringify({
+          model: 'deepseek-chat',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userMessage },
+          ],
+          max_tokens: 2048,
+          temperature: temp,
+        }),
+        signal: AbortSignal.timeout(60000),
+      });
+
+      if (!res.ok) continue;
+      const data = await res.json();
+      const content = data.choices?.[0]?.message?.content;
+      if (content) versions.push(content.trim());
+    } catch {
+      // Skip failed versions
+    }
+  }
+
+  // If all versions failed, return single version
+  if (versions.length === 0) {
+    const result = await rewriteText(originalText, style);
+    return [result.text];
+  }
+
+  return versions;
+}
+
+module.exports = { rewriteText, rewriteMultipleVersions };

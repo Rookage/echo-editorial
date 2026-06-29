@@ -273,8 +273,15 @@
         <span class="copy-toast hidden" id="textCopyToast">[✓] 已复制</span>
       </div>
       <div class="rewrite-buttons">
-        <button class="btn btn-accent" id="rewriteXhsBtn">[♛] 改写小红书</button>
-        <button class="btn btn-accent btn-douyin" id="rewriteDouyinBtn">[★] 改写抖音精选</button>
+        <button class="btn btn-accent" id="rewriteBtn">[♛] 开始改写</button>
+        <button class="btn btn-accent btn-douyin" id="rewriteMultiBtn">[✦] 生成3个版本</button>
+      </div>
+      <!-- Template Selector -->
+      <div class="template-section" id="templateSection">
+        <div class="template-label">[✦] 选择改写风格</div>
+        <div class="template-grid" id="templateGrid">
+          <!-- Populated dynamically by JS -->
+        </div>
       </div>
       <div class="field-error hidden" id="textError"></div>
     </div>
@@ -292,6 +299,10 @@
         </div>
       </div>
       <div class="result-content" id="resultContent"></div>
+      <!-- Template badge -->
+      <div class="result-template-badge hidden" id="resultTemplateBadge">
+        <span id="resultTemplateIcon"></span> <span id="resultTemplateName"></span>
+      </div>
       <div class="copy-toast hidden" id="copyToast">[✓] 已复制到剪贴板</div>
 
       <!-- Audio Generation -->
@@ -353,6 +364,6 @@
     </div>
   </div>
 
-  <script src="js/main.js?v=18"></script>
+  <script src="js/main.js?v=19"></script>
 </body>
 </html>

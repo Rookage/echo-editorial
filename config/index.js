@@ -20,6 +20,13 @@ const PYTHON_PATH = process.env.PYTHON_PATH || 'python';
   fs.mkdirSync(d, { recursive: true });
 });
 
+// Ensure templates/ and history/ exist (created manually or by git, but verify)
+const TEMPLATES_DIR = path.join(__dirname, '..', 'templates');
+const HISTORY_DIR = path.join(__dirname, '..', 'history');
+[TEMPLATES_DIR, HISTORY_DIR].forEach(d => {
+  fs.mkdirSync(d, { recursive: true });
+});
+
 // Runtime config — starts from .env, can be overridden via UI
 let runtimeConfig = {
   deepseekApiKey: process.env.DEEPSEEK_API_KEY || '',
@@ -68,6 +75,7 @@ function checkDependency(label, exePath, args) {
 
 module.exports = {
   TEMP_DIR, AUDIO_DIR, VIDEO_DIR, IMAGES_DIR, UPLOAD_DIR,
+  TEMPLATES_DIR, HISTORY_DIR,
   FFMPEG_PATH, PYTHON_PATH, CONFIG_FILE,
   get runtimeConfig() { return runtimeConfig; },
   setRuntimeConfigKey(key, value) { runtimeConfig[key] = value; },

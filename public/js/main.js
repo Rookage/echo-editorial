@@ -85,8 +85,12 @@
   const textCard = document.getElementById('textCard');
   const textSource = document.getElementById('textSource');
   const textDisplay = document.getElementById('textDisplay');
-  const rewriteXhsBtn = document.getElementById('rewriteXhsBtn');
-  const rewriteDouyinBtn = document.getElementById('rewriteDouyinBtn');
+  const rewriteXhsBtn = document.getElementById('rewriteBtn');
+  const rewriteDouyinBtn = document.getElementById('rewriteMultiBtn');
+  const templateGrid = document.getElementById('templateGrid');
+  const resultTemplateBadge = document.getElementById('resultTemplateBadge');
+  const resultTemplateIcon = document.getElementById('resultTemplateIcon');
+  const resultTemplateName = document.getElementById('resultTemplateName');
   const textError = document.getElementById('textError');
 
   const resultCard = document.getElementById('resultCard');
@@ -139,7 +143,59 @@
   // State
   let extractedText = '';
 
-  // ============ API Key Config ============
+  // ============ Template System ============
+
+  let templates = [];
+  let selectedTemplateId = 'xhs';
+
+  async function loadTemplates() {
+    try {
+      const res = await fetch('/api/templates');
+      const data = await res.json();
+      if (data.success && data.templates.length > 0) {
+        templates = data.templates;
+        renderTemplateGrid();
+        selectTemplate('xhs'); // Default to first template
+      }
+    } catch (e) {
+      // Templates not available, use fallback
+      console.warn('Failed to load templates, using defaults');
+    }
+  }
+
+  function renderTemplateGrid() {
+    templateGrid.innerHTML = '';
+    templates.forEach(function (t) {
+      var card = document.createElement('div');
+      card.className = 'template-card';
+      card.dataset.templateId = t.id;
+      card.innerHTML =
+        '<span class="template-card-icon">' + t.icon + '</span>' +
+        '<span class="template-card-name">' + t.name + '</span>';
+      card.addEventListener('click', function () { selectTemplate(t.id); });
+      templateGrid.appendChild(card);
+    });
+  }
+
+  function selectTemplate(id) {
+    selectedTemplateId = id;
+    // Update card styles
+    templateGrid.querySelectorAll('.template-card').forEach(function (c) {
+      c.classList.toggle('selected', c.dataset.templateId === id);
+    });
+    // Update recommended voice
+    var t = templates.find(function (tmpl) { return tmpl.id === id; });
+    if (t && t.voice) {
+      voiceSelect.value = t.voice;
+    }
+    // Update rewrite button text
+    if (t) {
+      rewriteBtn.textContent = t.icon + ' 改写' + t.name;
+    }
+  }
+
+  // Load templates on page init
+  loadTemplates();
 
   const configCard = document.getElementById('configCard');
   const configToggle = document.getElementById('configToggle');
@@ -569,11 +625,11 @@
   });
 
   // Rewrite — shared handler
-  const STYLE_LABELS = { xhs: '[♛] 小红书风格文案', douyin: '[★] 抖音精选文案' };
-  const STYLE_VOICES = { xhs: 'zh-CN-XiaoxiaoNeural', douyin: 'zh-CN-YunxiNeural' };
+  var STYLE_LABELS = { xhs: '[♛] 小红书风格文案', douyin: '[★] 抖音精选文案' };
+  var STYLE_VOICES = { xhs: 'zh-CN-XiaoxiaoNeural', douyin: 'zh-CN-YunxiNeural' };
 
-  async function handleRewrite(style, btn, label) {
-    const text = extractedText || manualInput.value.trim();
+  async function handleRewrite(style, btn, label, isMulti) {
+    var text = extractedText || manualInput.value.trim();
 
     if (!text) {
       showError(textError, '请先输入或提取文字内容');
@@ -582,19 +638,52 @@
 
     hideError(textError);
     hide(resultCard);
-    setLoading(true, `AI 正在改写为${label}风格...`);
+    var loadingMsg = isMulti ? 'AI 正在生成3个版本...' : ('AI 正在改写为' + label + '风格...');
+    setLoading(true, loadingMsg);
     setBtnLoading(btn, true);
 
     try {
-      const data = await rewrite(text, style);
-      resultTitle.textContent = STYLE_LABELS[style] || STYLE_LABELS.xhs;
-      resultContent.textContent = data.rewritten;
+      var endpoint = isMulti ? '/api/rewrite/multi' : '/api/rewrite';
+      var body = { text: text, style: style };
+      if (isMulti) body.count = 3;
+
+      var res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
+        body: JSON.stringify(body),
+      });
+      var data = await res.json();
+      if (!data.success) throw data.error;
+
+      if (isMulti && data.versions) {
+        // Multi-version: show first version in main view, list others below
+        resultTitle.textContent = data.template ? (data.template.icon + ' ' + data.template.name + ' · 3个版本') : ('多版本改写');
+        resultContent.textContent = data.versions[0].text;
+        // Add version switcher
+        renderVersionSwitcher(data.versions);
+      } else {
+        var templateName = data.template ? data.template.name : label;
+        resultTitle.textContent = data.template ? (data.template.icon + ' ' + data.template.name) : (label + '风格文案');
+        resultContent.textContent = data.rewritten;
+        // Show template badge
+        if (data.template) {
+          resultTemplateIcon.textContent = data.template.icon;
+          resultTemplateName.textContent = '由「' + data.template.name + '」模板生成';
+          show(resultTemplateBadge);
+        } else {
+          hide(resultTemplateBadge);
+        }
+        // Hide version switcher if showing single result
+        var vsEl = document.getElementById('versionSwitcher');
+        if (vsEl) hide(vsEl);
+      }
+
       // Reset audio state
       hide(audioPlayer);
       hide(ttsError);
       hideError(ttsError);
       // Set recommended voice
-      voiceSelect.value = STYLE_VOICES[style] || 'zh-CN-XiaoxiaoNeural';
+      voiceSelect.value = data.template && data.template.voice ? findVoiceForTemplate(data.template.id) : 'zh-CN-XiaoxiaoNeural';
       currentStyle = style;
       hide(videoPlayer);
       show(resultCard);
@@ -609,8 +698,40 @@
     }
   }
 
-  rewriteXhsBtn.addEventListener('click', () => handleRewrite('xhs', rewriteXhsBtn, '小红书'));
-  rewriteDouyinBtn.addEventListener('click', () => handleRewrite('douyin', rewriteDouyinBtn, '抖音精选'));
+  function findVoiceForTemplate(templateId) {
+    var t = templates.find(function (tmpl) { return tmpl.id === templateId; });
+    return t ? t.voice : 'zh-CN-XiaoxiaoNeural';
+  }
+
+  function renderVersionSwitcher(versions) {
+    var existing = document.getElementById('versionSwitcher');
+    if (existing) existing.remove();
+    var div = document.createElement('div');
+    div.id = 'versionSwitcher';
+    div.className = 'version-switcher';
+    div.innerHTML = '<div class="version-label">[✦] 版本</div><div class="version-tabs"></div>';
+    var tabs = div.querySelector('.version-tabs');
+    versions.forEach(function (v, i) {
+      var btn = document.createElement('button');
+      btn.className = 'btn btn-small version-tab' + (i === 0 ? ' active' : '');
+      btn.textContent = 'v' + (i + 1);
+      btn.addEventListener('click', function () {
+        resultContent.textContent = v.text;
+        tabs.querySelectorAll('.version-tab').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+      });
+      tabs.appendChild(btn);
+    });
+    resultCard.insertBefore(div, resultCard.querySelector('.audio-section'));
+  }
+
+  rewriteXhsBtn.addEventListener('click', () => handleRewrite(selectedTemplateId, rewriteXhsBtn, findTemplateName(selectedTemplateId), false));
+  rewriteDouyinBtn.addEventListener('click', () => handleRewrite(selectedTemplateId, rewriteDouyinBtn, findTemplateName(selectedTemplateId), true));
+
+  function findTemplateName(id) {
+    var t = templates.find(function (tmpl) { return tmpl.id === id; });
+    return t ? t.name : id;
+  }
 
   // TTS — Generate audio
   generateAudioBtn.addEventListener('click', async () => {
