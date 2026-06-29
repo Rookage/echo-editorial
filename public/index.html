@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>回声编辑部 · Echo Editorial</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css?v=19">
 </head>
 <body>
@@ -46,7 +47,7 @@
         <span class="config-label" id="configLabel">API Keys 未配置 — 点击设置</span>
         <span class="config-arrow" id="configArrow">▾</span>
       </div>
-      <div class="config-body hidden" id="configBody">
+      <form class="config-body hidden" id="configBody">
         <div class="config-row">
           <label class="config-field-label" for="deepseekKeyInput">DeepSeek API Key</label>
           <input type="password" id="deepseekKeyInput" class="config-input" placeholder="sk-..." autocomplete="off">
@@ -56,10 +57,10 @@
           <input type="password" id="pexelsKeyInput" class="config-input" placeholder="视频配图需要，可留空" autocomplete="off">
         </div>
         <div class="config-actions">
-          <button class="btn btn-small" id="saveConfigBtn">保存配置</button>
+          <button class="btn btn-small" id="saveConfigBtn" type="button">保存配置</button>
           <span class="config-msg hidden" id="configMsg"></span>
         </div>
-      </div>
+      </form>
     </section>
 
     <nav class="pipeline" id="pipeline" aria-label="生成进度">

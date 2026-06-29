@@ -8,6 +8,8 @@
 
 ![Echo Editorial hero](docs/assets/echo-editorial-hero.png)
 
+![Echo Editorial local app demo](demo/echo-editorial-demo.gif)
+
 > **中文**：从一条短视频开始，完成选题、写稿、审稿、配音、成片与复盘。
 > **English**: Start with one short video; turn it into topic judgment, draft, review, voiceover, vertical cut, and feedback.
 
